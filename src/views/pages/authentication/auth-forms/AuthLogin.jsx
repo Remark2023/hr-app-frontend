@@ -195,7 +195,7 @@ const AuthLogin = ({ ...others }) => {
               </Alert>
             )}
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-email-login">UserName</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-email-login">Username</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-login"
                 type="username"

@@ -14,6 +14,7 @@ const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const CandidateEvalution = Loadable(lazy(() => import('views/pages/CandidateEvaluationForm')));
 const FormTabsPage = Loadable(lazy(() => import('views/pages/hr/FacilitiesTabPage')));
+const InterviewEvaluationForm = Loadable(lazy(() => import('../reports/InterviewEvaluationForm')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -80,6 +81,83 @@ const MainRoutes = {
     {
       path: 'sample-page',
       element: <SamplePage /> // No authentication required for this route
+    },
+    {
+      path: 'interview-evaluation',
+      element: (
+        <InterviewEvaluationForm
+          candidate={{
+            candidateNumber: 2,
+            fullName: 'niloy hasan',
+            age: '25',
+            email: '',
+            contactNumber: '',
+            nidNumber: '',
+            presentAddress: 'dhaka',
+            permanentAddress: 'dhaka',
+            lastEducationExam: 'bsc',
+            lastEducationSubject: 'cse',
+            lastEducationInstitute: 'ulab',
+            lastEducationYear: '2022',
+            lastEducationResult: '3.43',
+            fatherName: '',
+            motherName: '',
+            numberOfSiblings: null,
+            referenceRelation: '',
+            referenceDesignation: '',
+            haveReference: false,
+            noticePeriods: '2',
+            hrNotes: 'good',
+            managementComment: null,
+            doj: null,
+            probationPeriod: '6',
+            investigation: null,
+            interviewDate: '2024-12-10',
+            interestedToJoin: true,
+            bond2Years: false,
+            bond5Years: false,
+            havePassport: true,
+            haveDrivingLicense: false,
+            workAnywhereInBd: true,
+            workAtFactory: false,
+            operateComp: true,
+            agreedTerms: true,
+            haveExperiences: true,
+            experiences: [
+              {
+                id: 1,
+                experienceField: null,
+                organization: null,
+                years: null
+              },
+              {
+                id: 2,
+                experienceField: null,
+                organization: null,
+                years: null
+              }
+            ],
+            facilitiesInfo: [],
+            evaluationInfo: [
+              {
+                id: 1,
+                submittedBy: 'M1078',
+                submittedDate: null,
+                attireBodyLanguage: 8.0,
+                workKnowledge: 8.0,
+                teamPlayer: 8.0,
+                problemSolvingSkill: 8.0,
+                communicationSkill: 8.0,
+                outOfMarks: 10.0,
+                totalMarks: 40.0,
+                avgMarks: 8.0,
+                performance: 'good'
+              }
+            ],
+            referenceName: ''
+          }}
+        />
+      )
     }
   ]
 };

@@ -1,0 +1,26 @@
+.headline {
+  display: flex;
+  justify-content: space-between;
+}
+
+table {
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+table th,
+td {
+  border: 1.5px solid;
+  text-align: center;
+}
+
+table tr {
+  height: 20px;
+}
+
+.key-value {
+  margin-right: 1rem;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}

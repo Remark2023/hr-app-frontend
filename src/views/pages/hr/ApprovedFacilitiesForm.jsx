@@ -59,7 +59,7 @@ export default function ExpectedStatusForm({ candidateNumber }) {
           candidateNumber: candidateNumber
         }
       };
-      const response = await addCandidateFacilitiesInfoService(requestBody);
+      const response = await addCandidateFacilitiesInfoService(requestBody, user.token);
 
       if (response.data?.statusCode === 200) {
         alert('Data Saved Successfully');

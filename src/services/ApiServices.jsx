@@ -99,9 +99,13 @@ export const addCandidateExperienceInfoService = async (bodyInfo) => {
   }
 };
 
-export const addCandidateFacilitiesInfoService = async (bodyInfo) => {
+export const addCandidateFacilitiesInfoService = async (bodyInfo, loginToken) => {
   try {
-    return await axios.post(`${usersUrl}api/facilities/add`, bodyInfo);
+    return await axios.post(`${usersUrl}api/facilities/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
   } catch (err) {
     console.log(err.message);
 

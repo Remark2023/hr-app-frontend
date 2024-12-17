@@ -31,7 +31,6 @@ export default function OtherFacilitiesForm({ candidateNumber }) {
   };
 
   const handleSubmit = async (data) => {
-    console.log(data);
     if (!data.candidateNumber) {
       alert('Please select a candidate!');
       return;

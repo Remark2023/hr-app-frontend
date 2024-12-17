@@ -6,6 +6,7 @@ import Form from '../../utilities/Form';
 
 export default function ExpectedStatusForm({ candidateNumber }) {
   const user = getUserData();
+
   const [formData, setFormData] = useState({
     facilityType: 'EXPECTED',
     company: '',
@@ -33,7 +34,7 @@ export default function ExpectedStatusForm({ candidateNumber }) {
           candidateNumber: candidateNumber
         };
 
-        const response = await getCandidateFacilitiesByCandidateInfoService(requestBody, 'EXPECTED');
+        const response = await getCandidateFacilitiesByCandidateInfoService(requestBody, 'EXPECTED', user.token);
         if (response.data?.statusCode === 200) {
           setFormData(response.data.data);
         }
@@ -58,7 +59,7 @@ export default function ExpectedStatusForm({ candidateNumber }) {
           candidateNumber: candidateNumber
         }
       };
-      const response = await addCandidateFacilitiesInfoService(requestBody);
+      const response = await addCandidateFacilitiesInfoService(requestBody, user.token);
 
       if (response.data?.statusCode === 200) {
         alert('Data Saved Successfully');

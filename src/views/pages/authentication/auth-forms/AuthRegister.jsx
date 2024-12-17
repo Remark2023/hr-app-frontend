@@ -91,7 +91,7 @@ const AuthRegister = ({ ...others }) => {
           )}
 
           <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
-            <InputLabel htmlFor="outlined-adornment-username-register">UserName</InputLabel>
+            <InputLabel htmlFor="outlined-adornment-username-register">Username</InputLabel>
             <OutlinedInput
               id="outlined-adornment-username-register"
               type="username"
