@@ -92,7 +92,7 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
   const groupedFields = groupFieldsByRows(fields, rowsConfig || [fields.length]);
 
   return (
-    <form onSubmit={handleSubmit} style={responsiveStyles.form}>
+    <form style={responsiveStyles.form}>
       {groupedFields.map((rowFields, rowIndex) => (
         <div key={rowIndex} style={responsiveStyles.row}>
           {rowFields.map((field, fieldIndex) => (
@@ -158,7 +158,7 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
           ))}
         </div>
       ))}
-      <button type="submit" style={responsiveStyles.button}>
+      <button style={responsiveStyles.button} onClick={handleSubmit}>
         Submit
       </button>
     </form>

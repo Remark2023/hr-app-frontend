@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Form from '../../utilities/Form';
 
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +14,8 @@ import {
 } from '../../../services/ApiServices';
 
 export default function EvaluationFormPage() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({});
   const [candidate, setCandidate] = useState({});
   const [showExperienceForm, setShowExperienceForm] = useState(false);
@@ -159,6 +162,10 @@ export default function EvaluationFormPage() {
         alert('Thank you for submitting your information!');
         setCandidate(candidateResponse.data.data);
         setShowExperienceForm(candidateResponse.data.data.haveExperiences);
+
+        if (!data.haveExperiences) {
+          navigate('/pages/login/login3', { replace: true });
+        }
       } else {
         alert('Process failed! Please try again.');
       }
@@ -183,7 +190,6 @@ export default function EvaluationFormPage() {
       // Filter out entries with all empty values
       const filteredArray = candidateExperienceList.filter((item) => Object.values(item).some((value) => value !== ''));
 
-      console.log(filteredArray.length);
       if (!filteredArray.length) {
         alert('Please submit your experiences!');
         return;
@@ -211,6 +217,8 @@ export default function EvaluationFormPage() {
       alert('Thank you for submitting your information!');
       setCandidateExperienceList([{ experienceField: '', organization: '', years: '' }]);
       setShowExperienceForm(false);
+
+      navigate('/pages/login/login3', { replace: true });
     } catch (err) {
       console.error('Error:', err.message);
       alert('Process failed! Please try again later.');
