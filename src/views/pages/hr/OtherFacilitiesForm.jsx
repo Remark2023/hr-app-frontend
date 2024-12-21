@@ -37,7 +37,7 @@ export default function OtherFacilitiesForm({ candidateNumber }) {
     }
 
     try {
-      const response = await updateCandidateInfoService(data);
+      const response = await updateCandidateInfoService(data, user.token);
 
       if (response.data?.statusCode === 200) {
         alert('Data Saved Successfully');

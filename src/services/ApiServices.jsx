@@ -79,9 +79,27 @@ export const addCandidateInfoService = async (bodyInfo) => {
   }
 };
 
-export const updateCandidateInfoService = async (bodyInfo) => {
+export const updateCandidateInfoService = async (bodyInfo, loginToken) => {
   try {
-    return await axios.put(`${usersUrl}api/candidates/update/byNumber`, bodyInfo);
+    return await axios.put(`${usersUrl}api/candidates/update/byNumber`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateCandidateStatusService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.put(`${usersUrl}api/candidates/status/update`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
   } catch (err) {
     console.log(err.message);
 

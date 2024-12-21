@@ -6,8 +6,9 @@ import * as React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
 import { useEffect, useRef, useState } from 'react';
+import { getUserData } from '../../context/UserContext';
 import InterviewEvaluationForm from '../../reports/InterviewEvaluationForm';
-import { getCandidateByNumberService, getCandidatesService } from '../../services/ApiServices';
+import { getCandidateByNumberService, getCandidatesService, updateCandidateStatusService } from '../../services/ApiServices';
 
 function MyCustomToolbar(props) {
   return (
@@ -21,6 +22,8 @@ function MyCustomToolbar(props) {
 }
 
 export default function QuickFilterOutsideOfGrid() {
+  const user = getUserData();
+
   const [candidateList, setCandidateList] = useState([]);
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,31 +41,59 @@ export default function QuickFilterOutsideOfGrid() {
 
           // Define your custom columns and map the data to match the headers
           const customColumns = [
-            { field: 'candidateNumber', headerName: 'Candidate Number', flex: 1 },
+            { field: 'candidateNumber', headerName: 'Candidate Number' },
             { field: 'interviewDate', headerName: 'Interview Date', flex: 1 },
             { field: 'fullName', headerName: 'Candidate Name', flex: 1 },
             { field: 'nidNumber', headerName: 'NID Number', flex: 1 },
-            { field: 'email', headerName: 'Email', flex: 1 },
-            { field: 'contactNumber', headerName: 'Contact Number', flex: 1 },
+            { field: 'email', headerName: 'Email' },
+            { field: 'contactNumber', headerName: 'Contact Number' },
             {
-              field: 'export',
-              headerName: 'Export',
+              field: 'action',
+              headerName: 'Action',
               flex: 1,
               sortable: false,
               renderCell: (params) => (
-                <button
-                  onClick={() => handlePrint(params.row)}
-                  style={{
-                    padding: '5px 10px',
-                    border: '1px solid #ccc',
-                    borderRadius: '5px',
-                    background: '#1976d2',
-                    color: '#fff',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Print
-                </button>
+                <div style={{ display: 'flex', gap: '5px', padding: '10px 0' }}>
+                  <button
+                    onClick={() => updateCandidateStatus(params.row, 'HIRED')}
+                    style={{
+                      padding: '7px',
+                      border: '1px solid #ccc',
+                      borderRadius: '5px',
+                      background: 'green',
+                      color: '#fff',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Hired
+                  </button>
+                  <button
+                    onClick={() => updateCandidateStatus(params.row, 'REJECTED')}
+                    style={{
+                      padding: '7px',
+                      border: '1px solid #ccc',
+                      borderRadius: '5px',
+                      background: 'crimson',
+                      color: '#fff',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Rejected
+                  </button>
+                  <button
+                    onClick={() => handleHire(params.row)}
+                    style={{
+                      padding: '7px',
+                      border: '1px solid #ccc',
+                      borderRadius: '5px',
+                      background: '#673ab7',
+                      color: '#fff',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Print
+                  </button>
+                </div>
               )
             }
           ];
@@ -172,12 +203,33 @@ export default function QuickFilterOutsideOfGrid() {
     }
   };
 
+  const updateCandidateStatus = async (row, value) => {
+    if (!row || !row.candidateNumber) {
+      console.error('Invalid row data. "candidateNumber" is required.');
+      return;
+    }
+
+    try {
+      const requestBody = {
+        candidateNumber: row.candidateNumber,
+        status: value
+      };
+      const response = await updateCandidateStatusService(requestBody, user.token);
+
+      const alertMessage = response.data?.statusCode === 200 ? `Successfully ${value}!` : 'Process failed! Try again';
+      alert(alertMessage);
+    } catch (error) {
+      console.error('Error fetching candidate details:', error);
+      alert(`Error: ${error.message}`);
+    }
+  };
+
   return (
     <Grid container spacing={2}>
       <Grid item>
         <Box id="filter-panel" />
       </Grid>
-      <Grid item style={{ width: '100%' }}>
+      <Grid item style={{ width: '100%', overflow: 'auto' }}>
         <div ref={tableRef}>
           <DataGrid
             rows={candidateList}

@@ -132,10 +132,10 @@ export default function EvaluationFormPage() {
   };
 
   const candidateOptions = candidateList
-    .filter((option) => option?.fullName?.toLowerCase().includes(inputValue?.toLowerCase() || ''))
+    .filter((option) => option?.status == null && option?.fullName?.toLowerCase().includes(inputValue?.toLowerCase() || ''))
     .map((option) => ({
       value: option?.candidateNumber || null,
-      label: `${option?.fullName || ''} ${option?.contactNumber || ''}`.trim()
+      label: `${option?.fullName || ''} (${option?.nidNumber || ''})`.trim()
     }));
 
   const handleCandidateSelection = (selectedOption) => {

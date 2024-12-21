@@ -40,7 +40,6 @@ const ProfileSection = () => {
   const customization = useSelector((state) => state.customization);
   const navigate = useNavigate();
   const user = getUserData();
-  console.log(user);
 
   // const [sdm, setSdm] = useState(true);
   // const [value, setValue] = useState('');
