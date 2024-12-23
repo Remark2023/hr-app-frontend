@@ -81,7 +81,7 @@ export default function QuickFilterOutsideOfGrid() {
                     Rejected
                   </button>
                   <button
-                    onClick={() => handleHire(params.row)}
+                    onClick={() => handlePrint(params.row)}
                     style={{
                       padding: '7px',
                       border: '1px solid #ccc',
@@ -121,6 +121,7 @@ export default function QuickFilterOutsideOfGrid() {
 
   // Print function
   const handlePrint = async (row) => {
+    console.log('helli');
     if (!row || !row.candidateNumber) {
       console.error('Invalid row data. "candidateNumber" is required.');
       return;

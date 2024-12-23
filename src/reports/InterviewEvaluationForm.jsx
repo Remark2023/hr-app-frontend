@@ -16,6 +16,33 @@ export default function FormTabsPage({ candidate }) {
   const expectedFacilities = candidate.facilitiesInfo.filter((facility) => facility.facilityType === 'EXPECTED');
   const approvedFacilities = candidate.facilitiesInfo.filter((facility) => facility.facilityType === 'APPROVED');
 
+  let total = 0;
+  let averageMarks = 0;
+  let percentageMarks = 0;
+
+  if (candidate.evaluationInfo.length > 0) {
+    candidate.evaluationInfo.forEach((element) => {
+      total += element.totalMarks;
+    });
+
+    averageMarks = total / candidate.evaluationInfo.length;
+
+    if (candidate.evaluationInfo[0].outOfMarks) {
+      percentageMarks = (averageMarks / (candidate.evaluationInfo[0].outOfMarks * 5)) * 100;
+    }
+  }
+
+  const performance =
+    averageMarks >= 45
+      ? 'Outstanding'
+      : averageMarks >= 31
+        ? 'Good'
+        : averageMarks >= 23
+          ? 'Average'
+          : averageMarks >= 17
+            ? 'Fair'
+            : 'Poor';
+
   return (
     <>
       {/* header section  */}
@@ -151,8 +178,8 @@ export default function FormTabsPage({ candidate }) {
         ))}
         <tr>
           <td colSpan={6}>Total Average Marks:</td>
-          <td>/50</td>
-          <td>%</td>
+          <td>{averageMarks > 0 ? averageMarks : ''} / 50</td>
+          <td>{percentageMarks > 0 ? percentageMarks : ''}%</td>
         </tr>
       </table>
 
@@ -199,8 +226,6 @@ export default function FormTabsPage({ candidate }) {
                 No
               </label>
             </td>
-            {/* <td></td>
-            <td></td> */}
           </tr>
 
           <tr>
@@ -283,12 +308,11 @@ export default function FormTabsPage({ candidate }) {
           <tr>
             <th colSpan="2">Overall Performance</th>
           </tr>
-
           <tr>
             <td>45 - 50</td>
             <td>
               <label>
-                <input type="checkbox" disabled></input>
+                <input type="checkbox" checked={performance === 'Outstanding'} disabled></input>
                 Outstanding
               </label>
             </td>
@@ -298,37 +322,34 @@ export default function FormTabsPage({ candidate }) {
             <td>31 - 44</td>
             <td>
               <label>
-                <input type="checkbox" disabled></input>
+                <input type="checkbox" checked={performance === 'Good'} disabled></input>
                 Good
               </label>
             </td>
           </tr>
-
           <tr>
             <td>23 - 30</td>
             <td>
               <label>
-                <input type="checkbox" disabled></input>
+                <input type="checkbox" checked={performance === 'Average'} disabled></input>
                 Average
               </label>
             </td>
           </tr>
-
           <tr>
             <td>17 - 22</td>
             <td>
               <label>
-                <input type="checkbox" disabled></input>
+                <input type="checkbox" checked={performance === 'Fair'} disabled></input>
                 Fair
               </label>
             </td>
           </tr>
-
           <tr>
             <td>0 - 16</td>
             <td>
               <label>
-                <input type="checkbox" disabled></input>
+                <input type="checkbox" checked={performance === 'Poor'} disabled></input>
                 Poor
               </label>
             </td>
