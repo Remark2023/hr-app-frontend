@@ -14,12 +14,12 @@ import interviewer from '../../../../menu-items/interviewer';
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
 const MenuList = () => {
-  const user = getUserData();
-  const roles = user?.role ?? [];
-
   const [menuItems, setMenuItems] = useState([]);
 
   useEffect(() => {
+    const user = getUserData();
+    const roles = user?.role ?? [];
+
     const dynamicMenus = [dashboard];
 
     if (roles.includes('INTERVIEWER')) {
@@ -30,7 +30,7 @@ const MenuList = () => {
     }
 
     setMenuItems(dynamicMenus);
-  }, [roles]);
+  }, []);
 
   const navItems = menuItems.map((item) => {
     switch (item.type) {
