@@ -12,7 +12,6 @@ import { CssBaseline, styled, useTheme } from '@mui/material';
 import { SET_MENU } from 'store/actions';
 import { drawerWidth } from 'store/constant';
 import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
-import Customization from '../Customization';
 import Header from './Header';
 import Sidebar from './Sidebar';
 
@@ -92,7 +91,7 @@ const MainLayout = () => {
         <Breadcrumbs separator={IconChevronRight} icon title rightAlign />
         <Outlet />
       </Main>
-      <Customization />
+      {/* <Customization /> */}
     </Box>
   );
 };

@@ -1,13 +1,12 @@
-// import dashboard from './dashboard';
+import dashboard from './dashboard';
 // import pages from './pages';
-import other from './other';
+import OtherMenu from './other'; // Import the updated OtherMenu function
 // import utilities from './utilities';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-    // items: [dashboard, utilities, other]
-    items: [other]
+  items: [dashboard, OtherMenu()] // Call OtherMenu to get the dynamically generated menu group
 };
 
 export default menuItems;

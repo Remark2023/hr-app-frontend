@@ -67,7 +67,6 @@ const AuthLogin = ({ ...others }) => {
 
   const handleSignIn = async (values) => {
     try {
-      console.log(values);
       const response = await login(values);
 
       if (response.request.status === 200) {

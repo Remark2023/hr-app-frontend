@@ -14,7 +14,7 @@ export const getUserData = () => {
 
     // Extract specific details
     const username = payloadObject.sub;
-    const role = payloadObject.role;
+    const role = payloadObject.roles;
     const issuedAt = new Date(payloadObject.iat * 1000);
     const expiration = new Date(payloadObject.exp * 1000);
 

@@ -43,8 +43,6 @@ const AuthRegister = ({ ...others }) => {
       inactiveDate: null
     };
 
-    console.log('Request Body:', requestBody);
-
     try {
       const response = await signUpForm(requestBody);
 

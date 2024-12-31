@@ -5,8 +5,6 @@ import axios from 'axios';
 const usersUrl = import.meta.env.VITE_REACT_APP_BASE_URL || 'http://182.160.114.100:8081/';
 
 export const login = async (user) => {
-  console.log(user);
-
   try {
     return await axios.post(`${usersUrl}auth/login`, user);
   } catch (err) {
@@ -19,6 +17,20 @@ export const login = async (user) => {
 export const getSubmittedByUser = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}api/jwt/users-view/byUsername`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getUserRolesService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}api/users/roles`, {
       headers: {
         Authorization: `Bearer ${loginToken}`
       }
@@ -164,6 +176,16 @@ export const getCandidateByNumberService = async (number) => {
 export const getCandidatesByDateService = async (interviewDate) => {
   try {
     return await axios.get(`${usersUrl}api/candidates/byDate?date=${encodeURIComponent(interviewDate)}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getCandidatesByStatusService = async (status, upperLimit, lowerLimit) => {
+  try {
+    return await axios.get(`${usersUrl}api/candidates/byStatus?status=${status}&upperLimit=${upperLimit}&lowerLimit=${lowerLimit}`);
   } catch (err) {
     console.log(err.message);
 

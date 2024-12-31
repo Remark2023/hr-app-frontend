@@ -6,6 +6,7 @@ import Loadable from 'ui-component/Loadable';
 
 // Lazy-loaded authentication pages
 const CandidatesEntryForm = Loadable(lazy(() => import('views/pages/candidates/CandidatesEntryForm')));
+const ThankYouPage = Loadable(lazy(() => import('views/utilities/ThankYouPage')));
 
 // ==============================|| CANDIDATE ROUTING ||============================== //
 const CandidateRoutes = {
@@ -15,6 +16,10 @@ const CandidateRoutes = {
     {
       path: '/candidates/form',
       element: <CandidatesEntryForm />
+    },
+    {
+      path: '/candidates/thankyou',
+      element: <ThankYouPage />
     }
   ]
 };

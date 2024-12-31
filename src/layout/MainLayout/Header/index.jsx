@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 // material-ui
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
+import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 
 // project imports
@@ -34,7 +36,22 @@ const Header = ({ handleLeftDrawerToggle }) => {
       >
         <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
           {/* <LogoSection /> */}
-          <h1> Herlan HR App</h1>
+          <Typography
+            component={Link}
+            to="/dashboard/default"
+            variant="h1"
+            sx={{
+              marginTop: '5px',
+              textDecoration: 'none',
+              color: 'black',
+              '&:hover': {
+                textDecoration: 'none'
+              }
+            }}
+          >
+            HR APP
+          </Typography>
+          {/* <h1> HR APP</h1> */}
         </Box>
         <ButtonBase sx={{ borderRadius: '8px', overflow: 'hidden', marginLeft: '5px' }}>
           <Avatar
