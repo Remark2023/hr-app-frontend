@@ -7,7 +7,9 @@ import { Typography } from '@mui/material';
 import NavGroup from './NavGroup';
 
 // menus imports dynamically
-import { dashboard, hr, interviewer } from '../../../../menu-items';
+import dashboard from '../../../../menu-items/dashboard';
+import hr from '../../../../menu-items/hr';
+import interviewer from '../../../../menu-items/interviewer';
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
