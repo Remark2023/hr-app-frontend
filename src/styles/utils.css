@@ -9,3 +9,15 @@
 .full-width {
   width: 100%;
 }
+
+.center-margin {
+  margin: 0 auto;
+}
+
+.padding-bottom-1rem {
+  padding-bottom: 1rem;
+}
+
+.margin-bottom-1rem {
+  margin-bottom: 1rem;
+}

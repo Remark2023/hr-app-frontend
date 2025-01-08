@@ -13,6 +13,9 @@ import {
   addCandidateInfoService
 } from '../../../services/ApiServices';
 
+// styles
+import '../../../styles/utils.css';
+
 export default function EvaluationFormPage() {
   const navigate = useNavigate();
 
@@ -264,7 +267,7 @@ export default function EvaluationFormPage() {
 
   return (
     <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#eef2f6' }}>
-      <div hidden={showExperienceForm}>
+      <div hidden={showExperienceForm} className="half-width center-margin">
         <h2>
           {' '}
           <span style={{ color: 'crimson' }}>Welcome!</span> Please enter your information{' '}
@@ -272,7 +275,7 @@ export default function EvaluationFormPage() {
         <Form
           fields={fields}
           initialValues={formData}
-          rowsConfig={[4, 2, 2, 5, 3, 3, 5, 5, 5, 5, 5]}
+          // rowsConfig={[4, 2, 2, 5, 3, 3, 5, 5, 5, 5, 5]}
           onSubmit={handleSubmit}
           resetAfterSubmit={true}
         />
@@ -281,7 +284,7 @@ export default function EvaluationFormPage() {
       <div hidden={!showExperienceForm}>
         <h2>Please enter your experiences information</h2>
 
-        <button style={responsiveStyles.input} onClick={handleAddRow}>
+        <button style={responsiveStyles.input} onClick={handleAddRow} className="margin-bottom-1rem">
           <FontAwesomeIcon icon={faPlus} /> Add more
         </button>
 
