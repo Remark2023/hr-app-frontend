@@ -6,6 +6,10 @@
   width: 50%;
 }
 
+.half-max-width {
+  max-width: 50%;
+}
+
 .full-width {
   width: 100%;
 }
@@ -20,4 +24,8 @@
 
 .margin-bottom-1rem {
   margin-bottom: 1rem;
+}
+
+.form-max-width {
+  max-width: 40rem;
 }

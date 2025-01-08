@@ -267,7 +267,7 @@ export default function EvaluationFormPage() {
 
   return (
     <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#eef2f6' }}>
-      <div hidden={showExperienceForm} className="half-width center-margin">
+      <div hidden={showExperienceForm} className="form-max-width center-margin">
         <h2>
           {' '}
           <span style={{ color: 'crimson' }}>Welcome!</span> Please enter your information{' '}
