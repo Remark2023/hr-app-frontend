@@ -15,6 +15,7 @@ const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const CandidateEvalution = Loadable(lazy(() => import('views/pages/CandidateEvaluationForm')));
 const FormTabsPage = Loadable(lazy(() => import('views/pages/hr/FacilitiesTabPage')));
 const InterviewEvaluationForm = Loadable(lazy(() => import('../reports/InterviewEvaluationForm')));
+const SignupApprovalPage = Loadable(lazy(() => import('views/pages/admin/SignupApprovalPage')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -81,6 +82,10 @@ const MainRoutes = {
     {
       path: 'sample-page',
       element: <SamplePage /> // No authentication required for this route
+    },
+    {
+      path: 'signup-approval',
+      element: <SignupApprovalPage /> // No authentication required for this route
     },
     {
       path: 'interview-evaluation',

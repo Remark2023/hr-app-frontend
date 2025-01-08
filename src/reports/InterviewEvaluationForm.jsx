@@ -310,7 +310,7 @@ export default function FormTabsPage({ candidate }) {
           </tr>
           <tr>
             <td>45 - 50</td>
-            <td>
+            <td style={{ textAlign: 'start' }}>
               <label>
                 <input type="checkbox" checked={performance === 'Outstanding'} disabled></input>
                 Outstanding
@@ -320,7 +320,7 @@ export default function FormTabsPage({ candidate }) {
 
           <tr>
             <td>31 - 44</td>
-            <td>
+            <td style={{ textAlign: 'start' }}>
               <label>
                 <input type="checkbox" checked={performance === 'Good'} disabled></input>
                 Good
@@ -329,7 +329,7 @@ export default function FormTabsPage({ candidate }) {
           </tr>
           <tr>
             <td>23 - 30</td>
-            <td>
+            <td style={{ textAlign: 'start' }}>
               <label>
                 <input type="checkbox" checked={performance === 'Average'} disabled></input>
                 Average
@@ -338,7 +338,7 @@ export default function FormTabsPage({ candidate }) {
           </tr>
           <tr>
             <td>17 - 22</td>
-            <td>
+            <td style={{ textAlign: 'start' }}>
               <label>
                 <input type="checkbox" checked={performance === 'Fair'} disabled></input>
                 Fair
@@ -347,7 +347,7 @@ export default function FormTabsPage({ candidate }) {
           </tr>
           <tr>
             <td>0 - 16</td>
-            <td>
+            <td style={{ textAlign: 'start' }}>
               <label>
                 <input type="checkbox" checked={performance === 'Poor'} disabled></input>
                 Poor

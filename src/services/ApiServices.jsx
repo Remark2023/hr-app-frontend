@@ -10,7 +10,17 @@ export const login = async (user) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
+  }
+};
+
+export const getRoleByTitleService = async (title) => {
+  try {
+    return await axios.get(`${usersUrl}api/roles/byTitle/${title}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
   }
 };
 
@@ -24,7 +34,31 @@ export const getSubmittedByUser = async (loginToken) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
+  }
+};
+
+export const getUsersByStatusService = async (status) => {
+  try {
+    return await axios.get(`${usersUrl}api/users/byStatus/${status}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
+export const updateSignupStatusService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.put(`${usersUrl}api/users/status/update`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
   }
 };
 
@@ -38,7 +72,7 @@ export const getUserRolesService = async (loginToken) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -52,7 +86,7 @@ export const getEvaluationforAll = async (loginToken) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -66,7 +100,7 @@ export const addEvaluationForm = async (bodyInfo, loginToken) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -76,7 +110,7 @@ export const signUpForm = async (bodyInfo) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -87,7 +121,7 @@ export const addCandidateInfoService = async (bodyInfo) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -101,7 +135,7 @@ export const updateCandidateInfoService = async (bodyInfo, loginToken) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -115,7 +149,7 @@ export const updateCandidateStatusService = async (bodyInfo, loginToken) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -125,7 +159,7 @@ export const addCandidateExperienceInfoService = async (bodyInfo) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -139,7 +173,7 @@ export const addCandidateFacilitiesInfoService = async (bodyInfo, loginToken) =>
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -149,7 +183,7 @@ export const getCandidateFacilitiesByCandidateInfoService = async (bodyInfo, typ
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -159,7 +193,7 @@ export const getCandidatesService = async () => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -169,7 +203,7 @@ export const getCandidateByNumberService = async (number) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -179,7 +213,7 @@ export const getCandidatesByDateService = async (interviewDate) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };
 
@@ -189,6 +223,6 @@ export const getCandidatesByStatusService = async (status, upperLimit, lowerLimi
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err.response;
   }
 };

@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import * as Yup from 'yup';
-import { signUpForm } from '../../../../services/ApiServices';
+import { getRoleByTitleService, signUpForm } from '../../../../services/ApiServices';
 
 const AuthRegister = ({ ...others }) => {
   const navigate = useNavigate();
@@ -28,22 +28,19 @@ const AuthRegister = ({ ...others }) => {
   };
 
   const handleSubmit = async (data) => {
-    const requestBody = {
-      username: data.username,
-      password: data.password,
-      status: 'APPROVED',
-      roles: [
-        {
-          id: 2,
-          title: 'INTERVIEWER',
-          status: 'ACTIVE'
-        }
-      ],
-      activeDate: new Date(),
-      inactiveDate: null
-    };
-
     try {
+      const roleResponse = await getRoleByTitleService('INTERVIEWER');
+      const roleData = roleResponse?.data.data || {};
+
+      const requestBody = {
+        username: data.username,
+        password: data.password,
+        status: 'PENDING',
+        roles: [roleData],
+        activeDate: new Date(),
+        inactiveDate: null
+      };
+      console.log(requestBody);
       const response = await signUpForm(requestBody);
 
       if (response.status === 200) {

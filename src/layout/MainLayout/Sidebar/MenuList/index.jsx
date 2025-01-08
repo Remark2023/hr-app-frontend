@@ -7,6 +7,7 @@ import { Typography } from '@mui/material';
 import NavGroup from './NavGroup';
 
 // menus imports dynamically
+import admin from '../../../../menu-items/admin';
 import dashboard from '../../../../menu-items/dashboard';
 import hr from '../../../../menu-items/hr';
 import interviewer from '../../../../menu-items/interviewer';
@@ -25,8 +26,13 @@ const MenuList = () => {
     if (roles.includes('INTERVIEWER')) {
       dynamicMenus.push(interviewer);
     }
+
     if (roles.includes('HR')) {
       dynamicMenus.push(hr);
+    }
+
+    if (roles.includes('ADMIN')) {
+      dynamicMenus.push(admin);
     }
 
     setMenuItems(dynamicMenus);
