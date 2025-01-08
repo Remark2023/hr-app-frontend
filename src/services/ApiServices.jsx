@@ -114,6 +114,16 @@ export const signUpForm = async (bodyInfo) => {
   }
 };
 
+export const addEmployeeService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}api/employee/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
 // candidate services
 export const addCandidateInfoService = async (bodyInfo) => {
   try {

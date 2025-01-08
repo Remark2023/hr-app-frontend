@@ -6,6 +6,9 @@ import Form from '../../utilities/Form';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+// components
+import AuthFooter from 'ui-component/cards/AuthFooter';
+
 // api services
 import {
   addCandidateExperienceInfoService,
@@ -324,6 +327,8 @@ export default function EvaluationFormPage() {
           Submit
         </button>
       </div>
+
+      <AuthFooter />
     </div>
   );
 }

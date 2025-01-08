@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import * as Yup from 'yup';
-import { getRoleByTitleService, signUpForm } from '../../../../services/ApiServices';
+import { addEmployeeService, getRoleByTitleService, signUpForm } from '../../../../services/ApiServices';
 
 const AuthRegister = ({ ...others }) => {
   const navigate = useNavigate();
@@ -40,23 +40,32 @@ const AuthRegister = ({ ...others }) => {
         activeDate: new Date(),
         inactiveDate: null
       };
-      console.log(requestBody);
       const response = await signUpForm(requestBody);
 
       if (response.status === 200) {
         setAlertMessage('Account Create Successfully! Please login now');
         setAlertSeverity('success');
 
+        const user = response.data.data;
+        const employeeRequestBody = {
+          employeeId: data.username,
+          fullName: data.fullname,
+          channel: data.channel,
+          designation: data.designation,
+          user: user
+        };
+        const res = await addEmployeeService(employeeRequestBody);
+
         // Delay navigation to ensure alert is visible
         setTimeout(() => {
           navigate('/pages/login/login3', { replace: true });
-        }, 1500);
+        }, 3000);
       } else {
         setAlertMessage('Process failed! Try again');
         setAlertSeverity('error');
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.log('Error submitting form:', error);
       setAlertMessage('An error occurred! Please try again.');
       setAlertSeverity('error');
     } finally {
@@ -71,11 +80,17 @@ const AuthRegister = ({ ...others }) => {
     <Formik
       initialValues={{
         username: '',
+        fullname: '',
+        designation: '',
+        channel: '',
         password: ''
       }}
       validationSchema={Yup.object().shape({
-        username: Yup.string().max(255).required('UserName is required'),
-        password: Yup.string().max(255).required('Password is required')
+        username: Yup.string().max(255).required('Username is required'),
+        fullname: Yup.string().max(255).required('Full name is required'),
+        designation: Yup.string().max(255).required('Designation is required'),
+        channel: Yup.string().max(255).required('Channel is required'),
+        password: Yup.string().max(255).min(6).required('Password is required')
       })}
       onSubmit={handleSubmit}
     >
@@ -101,6 +116,60 @@ const AuthRegister = ({ ...others }) => {
             {touched.username && errors.username && (
               <FormHelperText error id="standard-weight-helper-text--register">
                 {errors.username}
+              </FormHelperText>
+            )}
+          </FormControl>
+
+          <FormControl fullWidth error={Boolean(touched.fullname && errors.fullname)} sx={{ ...theme.typography.customInput }}>
+            <InputLabel htmlFor="outlined-adornment-fullname-register">Full name</InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-fullname-register"
+              type="fullname"
+              value={values.fullname}
+              name="fullname"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              inputProps={{}}
+            />
+            {touched.fullname && errors.fullname && (
+              <FormHelperText error id="standard-weight-helper-text--register">
+                {errors.fullname}
+              </FormHelperText>
+            )}
+          </FormControl>
+
+          <FormControl fullWidth error={Boolean(touched.designation && errors.designation)} sx={{ ...theme.typography.customInput }}>
+            <InputLabel htmlFor="outlined-adornment-designation-register">Designation</InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-designation-register"
+              type="designation"
+              value={values.designation}
+              name="designation"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              inputProps={{}}
+            />
+            {touched.designation && errors.designation && (
+              <FormHelperText error id="standard-weight-helper-text--register">
+                {errors.designation}
+              </FormHelperText>
+            )}
+          </FormControl>
+
+          <FormControl fullWidth error={Boolean(touched.channel && errors.channel)} sx={{ ...theme.typography.customInput }}>
+            <InputLabel htmlFor="outlined-adornment-channel-register">Channel</InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-channel-register"
+              type="channel"
+              value={values.channel}
+              name="channel"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              inputProps={{}}
+            />
+            {touched.channel && errors.channel && (
+              <FormHelperText error id="standard-weight-helper-text--register">
+                {errors.channel}
               </FormHelperText>
             )}
           </FormControl>
