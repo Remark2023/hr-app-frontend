@@ -24,6 +24,16 @@ export const getRoleByTitleService = async (title) => {
   }
 };
 
+export const getUserByUsernameService = async (username) => {
+  try {
+    return await axios.get(`${usersUrl}api/users/byUsername/${username}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
 export const getSubmittedByUser = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}api/jwt/users-view/byUsername`, {

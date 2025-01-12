@@ -9,7 +9,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import * as Yup from 'yup';
-import { addEmployeeService, getRoleByTitleService, signUpForm } from '../../../../services/ApiServices';
+import { getRoleByTitleService } from '../../../../services/ApiServices';
+
+import { signupProcess } from '../../../../utils/SignupProcess';
 
 const AuthRegister = ({ ...others }) => {
   const navigate = useNavigate();
@@ -28,50 +30,28 @@ const AuthRegister = ({ ...others }) => {
   };
 
   const handleSubmit = async (data) => {
-    try {
-      const roleResponse = await getRoleByTitleService('INTERVIEWER');
-      const roleData = roleResponse?.data.data || {};
+    const roleResponse = await getRoleByTitleService('INTERVIEWER');
+    const roleData = roleResponse?.data.data || {};
 
-      const requestBody = {
-        username: data.username,
-        password: data.password,
-        status: 'PENDING',
-        roles: [roleData],
-        activeDate: new Date(),
-        inactiveDate: null
-      };
-      const response = await signUpForm(requestBody);
+    const body = {
+      username: data.username,
+      password: data.password,
+      status: 'PENDING',
+      roles: [roleData],
+      // activeDate: new Date(),
+      // inactiveDate: null,
+      fullName: data.fullname,
+      channel: data.channel,
+      designation: data.designation
+    };
+    const signupResponse = await signupProcess(body);
 
-      if (response.status === 200) {
-        setAlertMessage('Account Create Successfully! Please login now');
-        setAlertSeverity('success');
+    setAlertMessage(signupResponse.alertMessage);
+    setAlertSeverity(signupResponse.alertSeverity);
 
-        const user = response.data.data;
-        const employeeRequestBody = {
-          employeeId: data.username,
-          fullName: data.fullname,
-          channel: data.channel,
-          designation: data.designation,
-          user: user
-        };
-        const res = await addEmployeeService(employeeRequestBody);
-
-        // Delay navigation to ensure alert is visible
-        setTimeout(() => {
-          navigate('/pages/login/login3', { replace: true });
-        }, 3000);
-      } else {
-        setAlertMessage('Process failed! Try again');
-        setAlertSeverity('error');
-      }
-    } catch (error) {
-      console.log('Error submitting form:', error);
-      setAlertMessage('An error occurred! Please try again.');
-      setAlertSeverity('error');
-    } finally {
-      // Clear alert after 3 seconds
+    if (signupResponse.redirectToLogin) {
       setTimeout(() => {
-        setAlertMessage('');
+        navigate('/pages/login/login3', { replace: true });
       }, 3000);
     }
   };

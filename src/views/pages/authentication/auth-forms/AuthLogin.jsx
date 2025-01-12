@@ -80,13 +80,13 @@ const AuthLogin = ({ ...others }) => {
           navigate('/dashboard/default', { replace: true });
         }, 1500);
       } else {
-        setAlertMessage('Authentication Denied! SignUp First');
+        setAlertMessage('Authentication Denied! Please provide valid credentials');
         setAlertSeverity('error');
 
         // Delay navigation to ensure the alert is visible
-        setTimeout(() => {
-          navigate('/pages/register/register3', { replace: true });
-        }, 1500);
+        // setTimeout(() => {
+        //   navigate('/pages/register/register3', { replace: true });
+        // }, 1500);
       }
     } catch (err) {
       setAlertMessage('Authentication failed! Please try again.');
