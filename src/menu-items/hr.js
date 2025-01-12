@@ -1,8 +1,8 @@
 // assets
-import { IconDatabase, IconFileInfo } from '@tabler/icons-react';
+import { IconDatabase, IconFileInfo, IconPlus } from '@tabler/icons-react';
 
 // constant
-const icons = { IconDatabase, IconFileInfo };
+const icons = { IconDatabase, IconFileInfo, IconPlus };
 
 // ==============================|| HR MENU ITEMS ||============================== //
 
@@ -25,6 +25,14 @@ const dashboard = {
       type: 'item',
       url: '/utils/data-table',
       icon: icons.IconFileInfo,
+      breadcrumbs: false
+    },
+    {
+      id: 'userAdd',
+      title: 'Create Users',
+      type: 'item',
+      url: '/user-creation',
+      icon: icons.IconPlus,
       breadcrumbs: false
     }
   ]
