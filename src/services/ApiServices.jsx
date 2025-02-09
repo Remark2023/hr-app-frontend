@@ -246,3 +246,41 @@ export const getCandidatesByStatusService = async (status, upperLimit, lowerLimi
     return err.response;
   }
 };
+
+export const getUsersBySpecificRoleService = async (status) => {
+  try {
+    return await axios.get(`${usersUrl}api/users/byRole/${status}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
+export const addManpowerRequisitionFromInfoService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}api/jwt/manpowerRequisition/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
+export const sendApprovalRequestInfoService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}api/jwt/manpowerRequisitionApproval/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
