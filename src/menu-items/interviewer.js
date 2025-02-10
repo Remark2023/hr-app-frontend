@@ -1,8 +1,8 @@
 // assets
-import { IconPencilQuestion } from '@tabler/icons-react';
+import { IconPencilQuestion, IconPlus } from '@tabler/icons-react';
 
 // constant
-const icons = { IconPencilQuestion };
+const icons = { IconPencilQuestion, IconPlus };
 
 // ==============================|| INTERVIEWER MENU ITEMS ||============================== //
 
@@ -17,6 +17,14 @@ const dashboard = {
       type: 'item',
       url: 'candidate-evaluation',
       icon: icons.IconPencilQuestion,
+      breadcrumbs: false
+    },
+    {
+      id: 'employee-requisition',
+      title: 'Employee Requisition',
+      type: 'item',
+      url: 'employeeRequisition/form',
+      icon: icons.IconPlus,
       breadcrumbs: false
     }
   ]

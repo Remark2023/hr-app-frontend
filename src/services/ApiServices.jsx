@@ -24,6 +24,16 @@ export const getRoleByTitleService = async (title) => {
   }
 };
 
+export const getAllUsersService = async () => {
+  try {
+    return await axios.get(`${usersUrl}api/users/all`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
 export const getUserByUsernameService = async (username) => {
   try {
     return await axios.get(`${usersUrl}api/users/byUsername/${username}`);

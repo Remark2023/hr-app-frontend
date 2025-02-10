@@ -1,8 +1,8 @@
 // assets
-import { IconDatabase, IconFileInfo, IconPlus } from '@tabler/icons-react';
+import { IconAlignRight, IconDatabase, IconFileInfo, IconPlus } from '@tabler/icons-react';
 
 // constant
-const icons = { IconDatabase, IconFileInfo, IconPlus };
+const icons = { IconDatabase, IconFileInfo, IconPlus, IconAlignRight };
 
 // ==============================|| HR MENU ITEMS ||============================== //
 
@@ -33,6 +33,14 @@ const dashboard = {
       type: 'item',
       url: '/user-creation',
       icon: icons.IconPlus,
+      breadcrumbs: false
+    },
+    {
+      id: 'role-assignment',
+      title: 'Role Assignment',
+      type: 'item',
+      url: 'role-assignment',
+      icon: icons.IconAlignRight,
       breadcrumbs: false
     }
   ]

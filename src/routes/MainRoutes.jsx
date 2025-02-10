@@ -18,6 +18,7 @@ const InterviewEvaluationForm = Loadable(lazy(() => import('../reports/Interview
 const SignupApprovalPage = Loadable(lazy(() => import('views/pages/admin/SignupApprovalPage')));
 const UserCreationPage = Loadable(lazy(() => import('views/pages/hr/UserCreationPage')));
 const EmployeeRequisitionForm = Loadable(lazy(() => import('views/pages/EmployeeRequisitionForm')));
+const RoleAssignmentPage = Loadable(lazy(() => import('views/pages/hr/RoleAssignmentPage')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -92,6 +93,10 @@ const MainRoutes = {
     {
       path: 'user-creation',
       element: <UserCreationPage />
+    },
+    {
+      path: 'role-assignment',
+      element: <RoleAssignmentPage />
     },
     {
       path: '/employeeRequisition/form',
