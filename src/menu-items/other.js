@@ -1,16 +1,15 @@
 // assets
 import {
-    IconBrandChrome,
-    IconDatabase,
-    IconFileInfo,
-    IconHelp,
-    IconPalette,
-    IconPencilQuestion,
-    IconShadow,
-    IconTypography,
-    IconWindmill
+  IconBrandChrome,
+  IconDatabase,
+  IconFileInfo,
+  IconHelp,
+  IconPalette,
+  IconPencilQuestion,
+  IconShadow,
+  IconTypography,
+  IconWindmill
 } from '@tabler/icons-react';
-import { getUserData } from '../context/UserContext';
 
 // constant
 const icons = {
@@ -28,41 +27,8 @@ const icons = {
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
 
 const OtherMenu = () => {
-  const user = getUserData();
-  const roles = user?.role ?? [];
   const menus = [];
-
-  if (roles.includes('INTERVIEWER')) {
-    menus.push({
-      id: 'sample-page',
-      title: 'Candidate Evaluation',
-      type: 'item',
-      url: 'candidate-evaluation',
-      icon: icons.IconPencilQuestion,
-      breadcrumbs: false
-    });
-  }
-
-  if (roles.includes('HR')) {
-    menus.push(
-      {
-        id: 'documentation',
-        title: 'Candidate Facilities',
-        type: 'item',
-        url: 'hr-entry-form',
-        icon: icons.IconDatabase,
-        breadcrumbs: false
-      },
-      {
-        id: 'dataTable',
-        title: 'Candidate Information',
-        type: 'item',
-        url: '/utils/data-table',
-        icon: icons.IconFileInfo,
-        breadcrumbs: false
-      }
-    );
-  }
+  // to add menus dynamically based to roles change in the layout -> sidebar -> MenuList -> index.jsx file
 
   const other = {
     id: 'sample-docs-roadmap',

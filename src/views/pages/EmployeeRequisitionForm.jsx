@@ -18,20 +18,21 @@ import '../../styles/utils.css';
 export default function EmployeeRequisitionFormPage() {
   const user = getUserData();
   const [formData, setFormData] = useState({});
-  const [users, setUsers] = useState({});
-  const [username, setUsername] = useState({});
+  const [approvers, setApprovers] = useState([]);
+  const [requester, setRequester] = useState(null);
   const [shouldResetForm, setShouldResetForm] = useState(true);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
 
   const fields = [
-    { label: 'Required Position', name: 'requiredPosition', type: 'text' },
-    { label: 'Number of Employee', name: 'numberOfEmployee', type: 'number' },
-    { label: 'Department', name: 'department', type: 'text' },
+    { label: 'Required Position*', name: 'requiredPosition', type: 'text' },
+    { label: 'Number of Employee*', name: 'numberOfEmployee', type: 'number' },
+    { label: 'Department*', name: 'department', type: 'text' },
+    { label: 'Location', name: 'location', type: 'text' },
     { label: 'Section', name: 'section', type: 'text' },
     { label: 'Sub Section', name: 'subSection', type: 'text' },
     { label: 'Expected Joining Date', name: 'expectedJoiningDate', type: 'date' },
-
+    { label: 'Replacement of Mr./Ms.', name: 'replacementOfMrMs', type: 'text' },
     {
       label: 'Reason for Request',
       name: 'reasonForRequest',
@@ -49,16 +50,14 @@ export default function EmployeeRequisitionFormPage() {
       label: 'Budgeted',
       name: 'budgeted',
       type: 'checkbox',
-      className: 'flex items-center gap-4', // Ensures inline layout
+      className: 'flex items-center gap-4',
       options: [
         { label: 'Yes', value: 'true' },
         { label: 'No', value: 'false' }
       ]
     },
-
-    { label: 'Replacement of Mr./Ms.', name: 'replacementOfMrMs', type: 'text' },
     { label: 'Main Function', name: 'mainFunction', type: 'textarea' },
-    { label: 'Role & Responsibilities', name: 'roleResponsibilities', type: 'textarea' },
+    { label: 'Role & Responsibilities*', name: 'roleResponsibilities', type: 'textarea' },
     { label: 'Minimum Experience', name: 'minimumExperience', type: 'number' },
     { label: 'Reports to', name: 'reportsTo', type: 'text' },
     { label: 'Minimum Education', name: 'minimumEducation', type: 'text' },
@@ -76,7 +75,7 @@ export default function EmployeeRequisitionFormPage() {
         const reponse = await getUserByUsernameService(user.username);
 
         if (reponse.data.statusCode === 200) {
-          setUsername(reponse.data.data.id);
+          setRequester(reponse.data.data.id);
         }
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -90,10 +89,9 @@ export default function EmployeeRequisitionFormPage() {
     async function fetchData() {
       try {
         const reponse = await getUsersBySpecificRoleService('MANPOWER REQUISITION APPROVER');
-        console.log(reponse.data.data);
 
         if (reponse.data.statusCode === 200) {
-          setUsers(reponse.data.data);
+          setApprovers(reponse.data.data);
         }
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -105,19 +103,29 @@ export default function EmployeeRequisitionFormPage() {
 
   const handleFormSubmit = async (data) => {
     try {
+      if (!requester) {
+        alert('Process failed! Try again');
+        return;
+      }
+
+      if (data.requiredPosition || data.department || data.roleResponsibilities) {
+        alert('Please enter the required fields!');
+        return;
+      }
+
       const employeeRequisitionFormRequestBody = {
         location: data.location ?? '',
-        requiredPosition: data.requiredPosition ?? '',
-        numberOfEmployee: data.numberOfEmployee ?? '',
-        department: data.department ?? '',
+        requiredPosition: data.requiredPosition,
+        numberOfEmployee: data.numberOfEmployee ?? 1,
+        department: data.department,
         section: data.section ?? '',
         subSection: data.subSection ?? '',
         reasonForRequest: data.reasonForRequest[0] ?? '',
-        isBudgeted: data.budgeted[0] ?? '', // Convert to boolean
+        isBudgeted: data.budgeted[0] ?? false,
         replacementOf: data.replacementOfMrMs ?? '',
         mainFunction: data.mainFunction ?? '',
         expectedJoiningDate: data.expectedJoiningDate ? new Date(data.expectedJoiningDate).toISOString() : '',
-        roleAndResponsibilities: data.roleResponsibilities ?? '',
+        roleAndResponsibilities: data.roleResponsibilities,
         minimumExperience: data.minimumExperience ?? '',
         reportsTo: data.reportsTo ?? '',
         minimumEducation: data.minimumEducation ?? '',
@@ -127,9 +135,9 @@ export default function EmployeeRequisitionFormPage() {
         competencyRequirements: data.competencyRequirements ?? '',
         computerOperationKnowledge: data.computerOperationKnowledge ?? '',
         additionalSkills: data.additionalSkills ?? '',
-        creationDate: new Date().toISOString(), // Current timestamp
+        creationDate: new Date().toISOString(),
         createdBy: {
-          id: username // Assuming `user.id` is available
+          id: requester
         }
       };
       const manpowerRequisitionResponse = await addManpowerRequisitionFromInfoService(employeeRequisitionFormRequestBody, user.token);
@@ -142,7 +150,7 @@ export default function EmployeeRequisitionFormPage() {
             approvalOfId: requisitionId,
             approvedById: data.selectedUser
           },
-          status: 'PENDING' // Assuming initial status
+          status: 'PENDING'
         };
         const approvalResponse = await sendApprovalRequestInfoService(approvalRequestBody, user.token);
 
@@ -194,8 +202,8 @@ export default function EmployeeRequisitionFormPage() {
           fields={fields}
           initialValues={formData}
           onSubmit={handleFormSubmit}
-          userList={users}
-          rowsConfig={[2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1]}
+          userList={approvers}
+          rowsConfig={[2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 1]}
           actionType="sendToApproval"
           resetAfterSubmit={shouldResetForm}
         />

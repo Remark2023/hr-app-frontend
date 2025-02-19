@@ -267,6 +267,34 @@ export const getUsersBySpecificRoleService = async (status) => {
   }
 };
 
+export const getAllManpowerRequisitionService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}api/jwt/manpowerRequisition/all`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
+export const getManpowerRequisitionByApproverService = async (loginToken, bodyInfo, status) => {
+  try {
+    return await axios.post(`${usersUrl}api/jwt/manpowerRequisitionApproval/get/byApprover/${status}`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
 export const addManpowerRequisitionFromInfoService = async (bodyInfo, loginToken) => {
   try {
     return await axios.post(`${usersUrl}api/jwt/manpowerRequisition/add`, bodyInfo, {

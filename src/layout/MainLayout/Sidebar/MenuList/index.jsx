@@ -11,6 +11,7 @@ import admin from '../../../../menu-items/admin';
 import dashboard from '../../../../menu-items/dashboard';
 import hr from '../../../../menu-items/hr';
 import interviewer from '../../../../menu-items/interviewer';
+import manpowerRequisitionApprover from '../../../../menu-items/manpowerRequisitionApprover';
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
@@ -33,6 +34,10 @@ const MenuList = () => {
 
     if (roles.includes('ADMIN')) {
       dynamicMenus.push(admin);
+    }
+
+    if (roles.includes('MANPOWER REQUISITION APPROVER')) {
+      dynamicMenus.push(manpowerRequisitionApprover);
     }
 
     setMenuItems(dynamicMenus);
