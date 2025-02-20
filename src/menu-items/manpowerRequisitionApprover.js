@@ -15,7 +15,7 @@ const dashboard = {
       id: 'employee-requisition-approval',
       title: 'Approval List',
       type: 'item',
-      url: 'employeeRequisition/approavl',
+      url: 'employeeRequisition/approval',
       icon: icons.IconList,
       breadcrumbs: false
     }

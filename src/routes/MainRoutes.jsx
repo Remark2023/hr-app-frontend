@@ -19,6 +19,7 @@ const SignupApprovalPage = Loadable(lazy(() => import('views/pages/admin/SignupA
 const UserCreationPage = Loadable(lazy(() => import('views/pages/hr/UserCreationPage')));
 const EmployeeRequisitionForm = Loadable(lazy(() => import('views/pages/EmployeeRequisitionForm')));
 const RoleAssignmentPage = Loadable(lazy(() => import('views/pages/hr/RoleAssignmentPage')));
+const ShowEmployeeRequisitionsPage = Loadable(lazy(() => import('views/pages/hr/ShowEmployeeRequisitionsPage')));
 const EmployeeRequisitionApprovalPage = Loadable(
   lazy(() => import('views/pages/employeeRequisionApprover/EmployeeRequisitionApprovalPage'))
 );
@@ -106,50 +107,54 @@ const MainRoutes = {
       element: <EmployeeRequisitionForm />
     },
     {
-      path: '/employeeRequisition/approavl',
+      path: '/employeeRequisition/approval',
       element: <EmployeeRequisitionApprovalPage />
+    },
+    {
+      path: '/employeeRequisition/show',
+      element: <ShowEmployeeRequisitionsPage />
     },
     {
       path: 'interview-evaluation',
       element: (
         <InterviewEvaluationForm
           candidate={{
-            candidateNumber: 2,
-            fullName: 'niloy hasan',
-            age: '25',
+            candidateNumber: null,
+            fullName: '',
+            age: '',
             email: '',
             contactNumber: '',
             nidNumber: '',
-            presentAddress: 'dhaka',
-            permanentAddress: 'dhaka',
-            lastEducationExam: 'bsc',
-            lastEducationSubject: 'cse',
-            lastEducationInstitute: 'ulab',
-            lastEducationYear: '2022',
-            lastEducationResult: '3.43',
+            presentAddress: '',
+            permanentAddress: '',
+            lastEducationExam: '',
+            lastEducationSubject: '',
+            lastEducationInstitute: '',
+            lastEducationYear: '',
+            lastEducationResult: '',
             fatherName: '',
             motherName: '',
             numberOfSiblings: null,
             referenceRelation: '',
             referenceDesignation: '',
             haveReference: false,
-            noticePeriods: '2',
-            hrNotes: 'good',
+            noticePeriods: '',
+            hrNotes: '',
             managementComment: null,
             doj: null,
-            probationPeriod: '6',
+            probationPeriod: '',
             investigation: null,
-            interviewDate: '2024-12-10',
-            interestedToJoin: true,
+            interviewDate: '',
+            interestedToJoin: false,
             bond2Years: false,
             bond5Years: false,
-            havePassport: true,
+            havePassport: false,
             haveDrivingLicense: false,
-            workAnywhereInBd: true,
+            workAnywhereInBd: false,
             workAtFactory: false,
-            operateComp: true,
-            agreedTerms: true,
-            haveExperiences: true,
+            operateComp: false,
+            agreedTerms: false,
+            haveExperiences: null,
             experiences: [
               {
                 id: 1,
@@ -167,18 +172,18 @@ const MainRoutes = {
             facilitiesInfo: [],
             evaluationInfo: [
               {
-                id: 1,
-                submittedBy: 'M1078',
+                id: null,
+                submittedBy: '',
                 submittedDate: null,
-                attireBodyLanguage: 8.0,
-                workKnowledge: 8.0,
-                teamPlayer: 8.0,
-                problemSolvingSkill: 8.0,
-                communicationSkill: 8.0,
-                outOfMarks: 10.0,
-                totalMarks: 40.0,
-                avgMarks: 8.0,
-                performance: 'good'
+                attireBodyLanguage: null,
+                workKnowledge: null,
+                teamPlayer: null,
+                problemSolvingSkill: null,
+                communicationSkill: null,
+                outOfMarks: null,
+                totalMarks: null,
+                avgMarks: null,
+                performance: ''
               }
             ],
             referenceName: ''

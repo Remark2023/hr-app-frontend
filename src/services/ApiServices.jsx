@@ -281,6 +281,20 @@ export const getAllManpowerRequisitionService = async (loginToken) => {
   }
 };
 
+export const getManpowerRequisitionsService = async (loginToken, status) => {
+  try {
+    return await axios.get(`${usersUrl}api/jwt/manpowerRequisition/byStatus/${status}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
 export const getManpowerRequisitionByApproverService = async (loginToken, bodyInfo, status) => {
   try {
     return await axios.post(`${usersUrl}api/jwt/manpowerRequisitionApproval/get/byApprover/${status}`, bodyInfo, {

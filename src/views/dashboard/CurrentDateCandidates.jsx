@@ -100,7 +100,7 @@ export default function CurrentDateCandidates() {
                       rows={candidateList}
                       columns={columns}
                       loading={loading}
-                      getRowId={(row) => row.candidateNumber} // Adjust as per your API's unique identifier
+                      getRowId={(row) => row.candidateNumber}
                       slots={{
                         toolbar: MyCustomToolbar
                       }}
