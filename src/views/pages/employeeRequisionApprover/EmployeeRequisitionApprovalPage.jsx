@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import CardContent from '@mui/material/CardContent';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import Portal from '@mui/material/Portal';
 import { DataGrid, GridToolbar, GridToolbarQuickFilter } from '@mui/x-data-grid';
@@ -59,10 +60,8 @@ export default function CurrentDateCandidates() {
   useEffect(() => {
     async function fetchData() {
       try {
-        console.log(selectedRow);
         const requestBody = { id: selectedRow };
         const response = await getRequisitionInfoService(requestBody, user.token);
-        console.log(response);
 
         if (response.data.statusCode === 200) {
           setRequisitionInfo(response.data.data[0].approvalOf);
@@ -73,7 +72,6 @@ export default function CurrentDateCandidates() {
     }
     fetchData();
   }, [selectedRow]);
-  console.log(requisitionInfo);
 
   useEffect(() => {
     async function fetchData() {
@@ -129,6 +127,52 @@ export default function CurrentDateCandidates() {
     // }
   };
 
+  const handleDialogClose = async () => {
+    try {
+      if (approver) {
+        const requestBody = { id: approver };
+        const response = await getManpowerRequisitionByApproverService(user.token, requestBody, 'PENDING');
+
+        if (response.data?.statusCode === 200) {
+          const data = response.data.data;
+          const approvalList = data.map((item) => item.approvalOf);
+
+          const customColumns = [
+            { field: 'id', headerName: 'Serial' },
+            { field: 'requiredPosition', headerName: 'Position', flex: 1 },
+            { field: 'numberOfEmployee', headerName: 'Vacancy' },
+            { field: 'department', headerName: 'Department', flex: 1 },
+            { field: 'reasonForRequest', headerName: 'Reason', flex: 1 },
+            { field: 'isBudgeted', headerName: 'Budgeted?' },
+            { field: 'replacementOf', headerName: 'Replacement Of' },
+            { field: 'creationDate', headerName: 'Requisition Date' }
+          ];
+
+          const filteredData = approvalList.map((row) =>
+            customColumns.reduce((acc, col) => {
+              acc[col.field] = row[col.field];
+              return acc;
+            }, {})
+          );
+
+          setColumns(customColumns);
+          setApprovalList(filteredData);
+        } else if (response.data?.statusCode === 404) {
+          setColumns([]);
+          setApprovalList([]);
+        } else {
+          console.error('Error fetching candidate details:', response);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching candidate details:', error);
+    } finally {
+      setLoading(false);
+      setIsLoading(false);
+      setDialogOpen(false);
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -165,9 +209,14 @@ export default function CurrentDateCandidates() {
         </MainCard>
       )}
 
-      {/* Dialog for Employee Requisition Form */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullScreen>
-        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '20px' }}>Employee Requisition Form</DialogTitle>
+        {/* <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '20px' }}>Employee Requisition Form</DialogTitle> */}
+        <DialogActions sx={{ justifyContent: 'center', padding: '16px' }}>
+          <Button variant="outlined" color="secondary" onClick={() => handleDialogClose()} style={{ width: '100%' }}>
+            Back to the list
+          </Button>
+        </DialogActions>
+
         <DialogContent>{requisitionInfo && <EmployeeRequisitionFormPage formData={requisitionInfo} actionType="Approved" />}</DialogContent>
       </Dialog>
     </>

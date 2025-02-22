@@ -84,12 +84,11 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
 
     try {
       onSubmit(updatedFormValues);
-      // setIsModalOpenForApproval(false);
+      setIsModalOpenForApproval(false);
       if (resetAfterSubmit) {
         setFormValues(initializeFormValues());
       }
     } catch (error) {
-      // alert('Process failed! Please try again...');
       setAlertSeverity('error');
       setTimeout(() => {
         setAlertMessage('');
@@ -140,7 +139,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
         setFormValues(initializeFormValues());
       }
     } catch (error) {
-      // alert('Process failed! Please try again...');
       setAlertSeverity('error');
       setTimeout(() => {
         setAlertMessage('');
@@ -384,10 +382,10 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
         ) : actionType === 'Approved' ? (
           <div style={{ display: 'flex', gap: '10px' }}>
             <button style={responsiveStyles.button} onClick={(e) => handleApprovalFormSubmit(e, 'send')}>
-              Send
+              APPROVE
             </button>
             <button style={responsiveStyles.button} onClick={(e) => handleApprovalFormSubmit(e, 'cancel')}>
-              Finish
+              REJECT
             </button>
           </div>
         ) : (
@@ -486,7 +484,7 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: '50%',
-              height: '50%', // Fixed height
+              height: '50%',
               backgroundColor: '#fff',
               padding: '20px',
               boxSizing: 'border-box',
@@ -497,9 +495,8 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
               alignItems: 'center'
             }}
           >
-            {/* Yes/No Checkboxes */}
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <label>Finish:</label>
+              <label>Finished:</label>
               <label>
                 <input type="checkbox" checked={isApproved === 'yes'} onChange={() => setIsApproved('yes')} />
                 Yes
@@ -510,7 +507,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
               </label>
             </div>
 
-            {/* Show Select User if No is selected */}
             {isApproved === 'no' && (
               <div style={{ marginTop: '10px' }}>
                 <label>Select an Approver</label>
@@ -534,7 +530,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
               </div>
             )}
 
-            {/* Remarks Field */}
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '10px', width: '50%' }}>
               <label>Remarks</label>
               <input
@@ -549,7 +544,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
               />
             </div>
 
-            {/* Submit Button */}
             <button
               style={{
                 marginTop: '10px',
@@ -590,7 +584,7 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: '50%',
-              height: '50%', // Fixed height
+              height: '50%',
               backgroundColor: '#fff',
               padding: '20px',
               boxSizing: 'border-box',
@@ -601,7 +595,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
               alignItems: 'center'
             }}
           >
-            {/* Remarks Field */}
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '10px', width: '50%' }}>
               <label>Remarks</label>
               <input
@@ -616,7 +609,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
               />
             </div>
 
-            {/* Submit Button */}
             <button
               style={{
                 marginTop: '10px',

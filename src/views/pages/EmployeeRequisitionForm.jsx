@@ -40,7 +40,6 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
     }
   }, [initialFormData]);
 
-  console.log(formData);
   const fields = [
     {
       label: 'Required Position*',
@@ -123,18 +122,16 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
   }, []);
 
   const handleFormSubmit = async (data) => {
-    console.log(data);
-
     try {
       if (!requester) {
         alert('Process failed! Try again');
         return;
       }
 
-      // if (data.requiredPosition || data.department || data.roleResponsibilities) {
-      //   alert('Please enter the required fields!');
-      //   return;
-      // }
+      if (!data.requiredPosition || !data.department || !data.roleResponsibilities) {
+        alert('Please enter all required fields!');
+        return;
+      }
 
       const employeeRequisitionFormRequestBody = {
         location: data.location ?? '',
@@ -159,250 +156,151 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
         computerOperationKnowledge: data.computerOperationKnowledge ?? '',
         additionalSkills: data.additionalSkills ?? '',
         creationDate: new Date().toISOString(),
-        createdBy: {
-          id: requester
-        }
+        createdBy: { id: requester }
       };
 
-      // Declare the response variable outside so it's accessible later
-      let manpowerRequisitionResponse;
+      const showAlert = (message, severity) => {
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setTimeout(() => setAlertMessage(''), 3000);
+      };
 
+      let manpowerRequisitionResponse;
       try {
         manpowerRequisitionResponse = await addManpowerRequisitionFromInfoService(employeeRequisitionFormRequestBody, user.token);
 
-        if (!manpowerRequisitionResponse || !manpowerRequisitionResponse.data || manpowerRequisitionResponse.data.statusCode !== 200) {
+        if (!manpowerRequisitionResponse?.data || manpowerRequisitionResponse.data.statusCode !== 200) {
           throw new Error('API request failed or returned an error.');
         }
       } catch (error) {
         console.error('API Error:', error);
-        return; // Stop execution if API call fails
+        showAlert('Failed to submit requisition. Please try again.', 'error');
+        return;
       }
 
       const requisitionId = manpowerRequisitionResponse?.data?.data?.id;
+      if (!requisitionId) {
+        showAlert('Requisition ID not received!', 'error');
+        return;
+      }
 
-      if (requisitionId) {
-        const approvalRequestBody = {
-          manpowerRequisitionApprovalUniqueKey: {
-            approvalOfId: requisitionId,
-            approvedById: data.selectedUser
-          },
-          status: 'PENDING'
-        };
-        console.log('Sending Approval Request:', approvalRequestBody);
+      const approvalRequestBody = {
+        manpowerRequisitionApprovalUniqueKey: {
+          approvalOfId: requisitionId,
+          approvedById: data.selectedUser
+        },
+        status: 'PENDING'
+      };
 
-        try {
-          const approvalResponse = await sendApprovalRequestInfoService(approvalRequestBody, user.token);
-          console.log('Approval Response:', approvalResponse);
-
-          if (approvalResponse.data.statusCode === 200) {
-            alert('Data Saved Successfully');
-            setAlertMessage('Data Saved Successfully');
-            setAlertSeverity('success');
-            setShouldResetForm(true); // Reset the form after success
-            setFormValues({}); // Empty out the form fields
-            setTimeout(() => {
-              setAlertMessage('');
-            }, 3000);
-          } else {
-            alert('Process failed! Try again');
-            setAlertMessage('Process failed! Try again');
-            setAlertSeverity('error');
-            setShouldResetForm(false);
-            setTimeout(() => {
-              setAlertMessage('');
-            }, 3000);
-          }
-        } catch (error) {
-          console.error('Approval API Error:', error);
+      try {
+        const approvalResponse = await sendApprovalRequestInfoService(approvalRequestBody, user.token);
+        if (approvalResponse.data.statusCode === 200) {
+          showAlert('Data Saved Successfully', 'success');
+          setShouldResetForm(true);
+        } else {
+          showAlert('Process failed! Try again', 'error');
         }
+      } catch (error) {
+        console.error('Approval API Error:', error);
+        showAlert('Approval process failed! Try again.', 'error');
       }
     } catch (error) {
-      setAlertMessage('Process failed! Please try again...');
-      setAlertSeverity('error');
-      setShouldResetForm(false);
-      setTimeout(() => {
-        setAlertMessage('');
-      }, 1000);
+      console.error('Unexpected Error:', error);
+      showAlert('Process failed! Please try again...', 'error');
+    } finally {
+      window.scrollTo(0, 0);
     }
   };
 
   const handleApprovalFormSubmit = async (data) => {
-    if (data.isApproved === 'no') {
-      try {
-        const manpowerApprovalRequisitionRequestBody = {
-          manpowerRequisitionApprovalUniqueKey: {
-            approvalOfId: Number(data.id), // Ensuring it's a Number
-            approvedById: Number(requester) // Ensuring it's a Number
-          },
-          remarks: String(data.remarks), // Ensuring it's a String
-          status: String('APPROVED') // Ensuring it's a String
-        };
-
-        const manpowerApprovalRequisitionResponse = await manpowerRequisitionApprovalUpdateService(
-          manpowerApprovalRequisitionRequestBody,
-          user.token
-        );
-
-        // const requisitionId = manpowerApprovalRequisitionResponse?.data?.data?.id;
-
-        if (manpowerApprovalRequisitionResponse.data.statusCode === 200) {
-          const approvalRequestBody = {
-            manpowerRequisitionApprovalUniqueKey: {
-              approvalOfId: data.id,
-              approvedById: data.selectedUser
-            },
-            status: 'PENDING'
-          };
-          const approvalResponse = await sendApprovalRequestInfoService(approvalRequestBody, user.token);
-
-          if (approvalResponse.data.statusCode === 200) {
-            alert('Data Saved Successfully');
-            setAlertMessage('Data Saved Successfully');
-            setAlertSeverity('success');
-            setShouldResetForm(true); // Reset the form after success
-            // Reset form values only after successful submission
-            setFormValues({}); // Empty out the form fields
-            setTimeout(() => {
-              setAlertMessage('');
-            }, 3000); // Alert message disappears after 3 seconds
-          } else {
-            alert('Process failed! Try again');
-            setAlertMessage('Process failed! Try again');
-            setAlertSeverity('error');
-            setShouldResetForm(false);
-            setTimeout(() => {
-              setAlertMessage('');
-            }, 3000); // Alert message disappears after 3 seconds
-          }
-        }
-      } catch (error) {
-        // alert('Process failed! Try again');
-        setAlertMessage('Process failed! Please try again...');
-        setAlertSeverity('error');
-        setShouldResetForm(false);
-        setTimeout(() => {
-          setAlertMessage('');
-        }, 1000);
+    try {
+      if (!data.id || !requester) {
+        showAlert('Invalid request data!', 'error');
+        return;
       }
-    } else if (data.isApproved === 'Reject') {
-      try {
-        const manpowerApprovalRequisitionRequestBody = {
-          manpowerRequisitionApprovalUniqueKey: {
-            approvalOfId: Number(data.id), // Ensuring it's a Number
-            approvedById: Number(requester) // Ensuring it's a Number
-          },
-          remarks: String(data.remarks), // Ensuring it's a String
-          status: String('REJECTED') // Ensuring it's a String
-        };
 
-        const manpowerApprovalRequisitionResponse = await manpowerRequisitionApprovalUpdateService(
-          manpowerApprovalRequisitionRequestBody,
-          user.token
-        );
+      const status = data.isApproved === 'Reject' ? 'REJECTED' : 'APPROVED';
+      const manpowerApprovalRequisitionRequestBody = {
+        manpowerRequisitionApprovalUniqueKey: {
+          approvalOfId: Number(data.id),
+          approvedById: Number(requester)
+        },
+        remarks: String(data.remarks),
+        status: status
+      };
 
-        // const requisitionId = manpowerApprovalRequisitionResponse?.data?.data?.id;
-
-        if (manpowerApprovalRequisitionResponse.data.statusCode === 200) {
-          const approvalRequestBody = {
-            id: Number(data.id), // Ensuring it's a Number
-            remarks: String(data.remarks), // Ensuring it's a String
-            status: String('REJECTED') // Ensuring it's a String
-          };
-
-          const approvalResponse = await manpowerRequisitionUpdateService(approvalRequestBody, user.token);
-
-          if (approvalResponse.data.statusCode === 200) {
-            alert('Data Saved Successfully');
-            setAlertMessage('Data Saved Successfully');
-            setAlertSeverity('success');
-            setShouldResetForm(true); // Reset the form after success
-            // Reset form values only after successful submission
-            setFormValues({}); // Empty out the form fields
-            setTimeout(() => {
-              setAlertMessage('');
-            }, 3000); // Alert message disappears after 3 seconds
-          } else {
-            alert('Process failed! Try again');
-            setAlertMessage('Process failed! Try again');
-            setAlertSeverity('error');
-            setShouldResetForm(false);
-            setTimeout(() => {
-              setAlertMessage('');
-            }, 3000); // Alert message disappears after 3 seconds
-          }
+      // Function to handle API calls and return response
+      const handleApiCall = async (apiFunction, requestBody) => {
+        try {
+          const response = await apiFunction(requestBody, user.token);
+          return response?.data?.statusCode === 200 ? response : null;
+        } catch (error) {
+          console.error('API Error:', error);
+          return null;
         }
-      } catch (error) {
-        // alert('Process failed! Try again');
-        setAlertMessage('Process failed! Please try again...');
-        setAlertSeverity('error');
-        setShouldResetForm(false);
-        setTimeout(() => {
-          setAlertMessage('');
-        }, 1000);
+      };
+
+      const manpowerApprovalResponse = await handleApiCall(
+        manpowerRequisitionApprovalUpdateService,
+        manpowerApprovalRequisitionRequestBody
+      );
+
+      if (!manpowerApprovalResponse) {
+        showAlert('Approval process failed! Try again.', 'error');
+        return;
       }
-    } else {
-      try {
-        const manpowerApprovalRequisitionRequestBody = {
-          manpowerRequisitionApprovalUniqueKey: {
-            approvalOfId: Number(data.id), // Ensuring it's a Number
-            approvedById: Number(requester) // Ensuring it's a Number
-          },
-          remarks: String(data.remarks), // Ensuring it's a String
-          status: String('APPROVED') // Ensuring it's a String
+
+      let approvalRequestBody;
+      if (status === 'REJECTED') {
+        approvalRequestBody = {
+          id: Number(data.id),
+          remarks: String(data.remarks),
+          status: 'REJECTED'
         };
-
-        const manpowerApprovalRequisitionResponse = await manpowerRequisitionApprovalUpdateService(
-          manpowerApprovalRequisitionRequestBody,
-          user.token
-        );
-
-        // const requisitionId = manpowerApprovalRequisitionResponse?.data?.data?.id;
-
-        if (manpowerApprovalRequisitionResponse.data.statusCode === 200) {
-          const approvalRequestBody = {
-            id: Number(data.id), // Ensuring it's a Number
-            remarks: String(data.remarks), // Ensuring it's a String
-            status: String('APPROVED') // Ensuring it's a String
-          };
-
-          const approvalResponse = await manpowerRequisitionUpdateService(approvalRequestBody, user.token);
-
-          if (approvalResponse.data.statusCode === 200) {
-            alert('Data Saved Successfully');
-            setAlertMessage('Data Saved Successfully');
-            setAlertSeverity('success');
-            setShouldResetForm(true); // Reset the form after success
-            // Reset form values only after successful submission
-            setFormValues({}); // Empty out the form fields
-            setTimeout(() => {
-              setAlertMessage('');
-            }, 3000); // Alert message disappears after 3 seconds
-          } else {
-            alert('Process failed! Try again');
-            setAlertMessage('Process failed! Try again');
-            setAlertSeverity('error');
-            setShouldResetForm(false);
-            setTimeout(() => {
-              setAlertMessage('');
-            }, 3000); // Alert message disappears after 3 seconds
-          }
-        }
-      } catch (error) {
-        // alert('Process failed! Try again');
-        setAlertMessage('Process failed! Please try again...');
-        setAlertSeverity('error');
-        setShouldResetForm(false);
-        setTimeout(() => {
-          setAlertMessage('');
-        }, 1000);
+      } else {
+        approvalRequestBody =
+          data.isApproved === 'no'
+            ? {
+                manpowerRequisitionApprovalUniqueKey: {
+                  approvalOfId: data.id,
+                  approvedById: data.selectedUser
+                },
+                status: 'PENDING'
+              }
+            : {
+                id: Number(data.id),
+                remarks: String(data.remarks),
+                status: 'APPROVED'
+              };
       }
+
+      const finalApprovalResponse = await handleApiCall(
+        status === 'REJECTED' ? manpowerRequisitionUpdateService : sendApprovalRequestInfoService,
+        approvalRequestBody
+      );
+
+      if (finalApprovalResponse) {
+        showAlert('Data Saved Successfully', 'success');
+        setShouldResetForm(true);
+      } else {
+        showAlert('Process failed! Try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Unexpected Error:', error);
+      showAlert('Process failed! Please try again...', 'error');
     }
+  };
+
+  const showAlert = (message, severity) => {
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setTimeout(() => setAlertMessage(''), 3000);
   };
 
   return (
     <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#eef2f6' }}>
       {alertMessage && (
-        <Alert variant="filled" severity={alertSeverity}>
+        <Alert variant="filled" severity={alertSeverity} className="form-max-width center-margin">
           {alertMessage}
         </Alert>
       )}
@@ -416,14 +314,14 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
           initialValues={formData}
           onSubmit={(data) => {
             if (actionType === 'Approved') {
-              handleApprovalFormSubmit(data); // Call approval submission handler
+              handleApprovalFormSubmit(data);
             } else {
-              handleFormSubmit(data); // Call standard submission handler
+              handleFormSubmit(data);
             }
           }}
           userList={approvers}
           rowsConfig={[2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 1]}
-          actionType={actionType || 'sendToApproval'} // Dynamically set actionType
+          actionType={actionType || 'sendToApproval'}
           resetAfterSubmit={shouldResetForm}
           readOnly={actionType === 'Approved'}
         />
