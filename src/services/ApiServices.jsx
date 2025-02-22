@@ -336,3 +336,45 @@ export const sendApprovalRequestInfoService = async (bodyInfo, loginToken) => {
     return err.response;
   }
 };
+
+export const getRequisitionInfoService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}api/jwt/manpowerRequisitionApproval/get/byRequisition`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
+export const manpowerRequisitionApprovalUpdateService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.put(`${usersUrl}api/jwt/manpowerRequisitionApproval/status/update`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};
+
+export const manpowerRequisitionUpdateService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.put(`${usersUrl}api/jwt/manpowerRequisition/status/update`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.response;
+  }
+};

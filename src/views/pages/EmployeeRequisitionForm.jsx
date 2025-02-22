@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import Alert from '@mui/material/Alert';
 import { useEffect, useState } from 'react';
@@ -9,23 +11,42 @@ import {
   addManpowerRequisitionFromInfoService,
   getUserByUsernameService,
   getUsersBySpecificRoleService,
+  manpowerRequisitionApprovalUpdateService,
+  manpowerRequisitionUpdateService,
   sendApprovalRequestInfoService
 } from '../../services/ApiServices.jsx';
 
 // styles
 import '../../styles/utils.css';
 
-export default function EmployeeRequisitionFormPage() {
+export default function EmployeeRequisitionFormPage({ formData: initialFormData, actionType }) {
   const user = getUserData();
-  const [formData, setFormData] = useState({});
+
+  const [formData, setFormData] = useState(initialFormData || {});
   const [approvers, setApprovers] = useState([]);
   const [requester, setRequester] = useState(null);
   const [shouldResetForm, setShouldResetForm] = useState(true);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
+  console.log(formData);
+  useEffect(() => {
+    if (initialFormData) {
+      setFormData({
+        ...initialFormData,
+        budgeted: initialFormData.isBudgeted ? ['true'] : ['false'] // Convert isBudgeted to budgeted format
+      });
+    } else {
+      setFormData({});
+    }
+  }, [initialFormData]);
 
+  console.log(formData);
   const fields = [
-    { label: 'Required Position*', name: 'requiredPosition', type: 'text' },
+    {
+      label: 'Required Position*',
+      name: 'requiredPosition',
+      type: 'text'
+    },
     { label: 'Number of Employee*', name: 'numberOfEmployee', type: 'number' },
     { label: 'Department*', name: 'department', type: 'text' },
     { label: 'Location', name: 'location', type: 'text' },
@@ -102,16 +123,18 @@ export default function EmployeeRequisitionFormPage() {
   }, []);
 
   const handleFormSubmit = async (data) => {
+    console.log(data);
+
     try {
       if (!requester) {
         alert('Process failed! Try again');
         return;
       }
 
-      if (data.requiredPosition || data.department || data.roleResponsibilities) {
-        alert('Please enter the required fields!');
-        return;
-      }
+      // if (data.requiredPosition || data.department || data.roleResponsibilities) {
+      //   alert('Please enter the required fields!');
+      //   return;
+      // }
 
       const employeeRequisitionFormRequestBody = {
         location: data.location ?? '',
@@ -140,7 +163,20 @@ export default function EmployeeRequisitionFormPage() {
           id: requester
         }
       };
-      const manpowerRequisitionResponse = await addManpowerRequisitionFromInfoService(employeeRequisitionFormRequestBody, user.token);
+
+      // Declare the response variable outside so it's accessible later
+      let manpowerRequisitionResponse;
+
+      try {
+        manpowerRequisitionResponse = await addManpowerRequisitionFromInfoService(employeeRequisitionFormRequestBody, user.token);
+
+        if (!manpowerRequisitionResponse || !manpowerRequisitionResponse.data || manpowerRequisitionResponse.data.statusCode !== 200) {
+          throw new Error('API request failed or returned an error.');
+        }
+      } catch (error) {
+        console.error('API Error:', error);
+        return; // Stop execution if API call fails
+      }
 
       const requisitionId = manpowerRequisitionResponse?.data?.data?.id;
 
@@ -152,36 +188,214 @@ export default function EmployeeRequisitionFormPage() {
           },
           status: 'PENDING'
         };
-        const approvalResponse = await sendApprovalRequestInfoService(approvalRequestBody, user.token);
+        console.log('Sending Approval Request:', approvalRequestBody);
 
-        if (approvalResponse.data.statusCode === 200) {
-          alert('Data Saved Successfully');
-          setAlertMessage('Data Saved Successfully');
-          setAlertSeverity('success');
-          setShouldResetForm(true); // Reset the form after success
-          // Reset form values only after successful submission
-          setFormValues({}); // Empty out the form fields
-          setTimeout(() => {
-            setAlertMessage('');
-          }, 3000); // Alert message disappears after 3 seconds
-        } else {
-          alert('Process failed! Try again');
-          setAlertMessage('Process failed! Try again');
-          setAlertSeverity('error');
-          setShouldResetForm(false);
-          setTimeout(() => {
-            setAlertMessage('');
-          }, 3000); // Alert message disappears after 3 seconds
+        try {
+          const approvalResponse = await sendApprovalRequestInfoService(approvalRequestBody, user.token);
+          console.log('Approval Response:', approvalResponse);
+
+          if (approvalResponse.data.statusCode === 200) {
+            alert('Data Saved Successfully');
+            setAlertMessage('Data Saved Successfully');
+            setAlertSeverity('success');
+            setShouldResetForm(true); // Reset the form after success
+            setFormValues({}); // Empty out the form fields
+            setTimeout(() => {
+              setAlertMessage('');
+            }, 3000);
+          } else {
+            alert('Process failed! Try again');
+            setAlertMessage('Process failed! Try again');
+            setAlertSeverity('error');
+            setShouldResetForm(false);
+            setTimeout(() => {
+              setAlertMessage('');
+            }, 3000);
+          }
+        } catch (error) {
+          console.error('Approval API Error:', error);
         }
       }
     } catch (error) {
-      alert('Process failed! Try again');
       setAlertMessage('Process failed! Please try again...');
       setAlertSeverity('error');
       setShouldResetForm(false);
       setTimeout(() => {
         setAlertMessage('');
       }, 1000);
+    }
+  };
+
+  const handleApprovalFormSubmit = async (data) => {
+    if (data.isApproved === 'no') {
+      try {
+        const manpowerApprovalRequisitionRequestBody = {
+          manpowerRequisitionApprovalUniqueKey: {
+            approvalOfId: Number(data.id), // Ensuring it's a Number
+            approvedById: Number(requester) // Ensuring it's a Number
+          },
+          remarks: String(data.remarks), // Ensuring it's a String
+          status: String('APPROVED') // Ensuring it's a String
+        };
+
+        const manpowerApprovalRequisitionResponse = await manpowerRequisitionApprovalUpdateService(
+          manpowerApprovalRequisitionRequestBody,
+          user.token
+        );
+
+        // const requisitionId = manpowerApprovalRequisitionResponse?.data?.data?.id;
+
+        if (manpowerApprovalRequisitionResponse.data.statusCode === 200) {
+          const approvalRequestBody = {
+            manpowerRequisitionApprovalUniqueKey: {
+              approvalOfId: data.id,
+              approvedById: data.selectedUser
+            },
+            status: 'PENDING'
+          };
+          const approvalResponse = await sendApprovalRequestInfoService(approvalRequestBody, user.token);
+
+          if (approvalResponse.data.statusCode === 200) {
+            alert('Data Saved Successfully');
+            setAlertMessage('Data Saved Successfully');
+            setAlertSeverity('success');
+            setShouldResetForm(true); // Reset the form after success
+            // Reset form values only after successful submission
+            setFormValues({}); // Empty out the form fields
+            setTimeout(() => {
+              setAlertMessage('');
+            }, 3000); // Alert message disappears after 3 seconds
+          } else {
+            alert('Process failed! Try again');
+            setAlertMessage('Process failed! Try again');
+            setAlertSeverity('error');
+            setShouldResetForm(false);
+            setTimeout(() => {
+              setAlertMessage('');
+            }, 3000); // Alert message disappears after 3 seconds
+          }
+        }
+      } catch (error) {
+        // alert('Process failed! Try again');
+        setAlertMessage('Process failed! Please try again...');
+        setAlertSeverity('error');
+        setShouldResetForm(false);
+        setTimeout(() => {
+          setAlertMessage('');
+        }, 1000);
+      }
+    } else if (data.isApproved === 'Reject') {
+      try {
+        const manpowerApprovalRequisitionRequestBody = {
+          manpowerRequisitionApprovalUniqueKey: {
+            approvalOfId: Number(data.id), // Ensuring it's a Number
+            approvedById: Number(requester) // Ensuring it's a Number
+          },
+          remarks: String(data.remarks), // Ensuring it's a String
+          status: String('REJECTED') // Ensuring it's a String
+        };
+
+        const manpowerApprovalRequisitionResponse = await manpowerRequisitionApprovalUpdateService(
+          manpowerApprovalRequisitionRequestBody,
+          user.token
+        );
+
+        // const requisitionId = manpowerApprovalRequisitionResponse?.data?.data?.id;
+
+        if (manpowerApprovalRequisitionResponse.data.statusCode === 200) {
+          const approvalRequestBody = {
+            id: Number(data.id), // Ensuring it's a Number
+            remarks: String(data.remarks), // Ensuring it's a String
+            status: String('REJECTED') // Ensuring it's a String
+          };
+
+          const approvalResponse = await manpowerRequisitionUpdateService(approvalRequestBody, user.token);
+
+          if (approvalResponse.data.statusCode === 200) {
+            alert('Data Saved Successfully');
+            setAlertMessage('Data Saved Successfully');
+            setAlertSeverity('success');
+            setShouldResetForm(true); // Reset the form after success
+            // Reset form values only after successful submission
+            setFormValues({}); // Empty out the form fields
+            setTimeout(() => {
+              setAlertMessage('');
+            }, 3000); // Alert message disappears after 3 seconds
+          } else {
+            alert('Process failed! Try again');
+            setAlertMessage('Process failed! Try again');
+            setAlertSeverity('error');
+            setShouldResetForm(false);
+            setTimeout(() => {
+              setAlertMessage('');
+            }, 3000); // Alert message disappears after 3 seconds
+          }
+        }
+      } catch (error) {
+        // alert('Process failed! Try again');
+        setAlertMessage('Process failed! Please try again...');
+        setAlertSeverity('error');
+        setShouldResetForm(false);
+        setTimeout(() => {
+          setAlertMessage('');
+        }, 1000);
+      }
+    } else {
+      try {
+        const manpowerApprovalRequisitionRequestBody = {
+          manpowerRequisitionApprovalUniqueKey: {
+            approvalOfId: Number(data.id), // Ensuring it's a Number
+            approvedById: Number(requester) // Ensuring it's a Number
+          },
+          remarks: String(data.remarks), // Ensuring it's a String
+          status: String('APPROVED') // Ensuring it's a String
+        };
+
+        const manpowerApprovalRequisitionResponse = await manpowerRequisitionApprovalUpdateService(
+          manpowerApprovalRequisitionRequestBody,
+          user.token
+        );
+
+        // const requisitionId = manpowerApprovalRequisitionResponse?.data?.data?.id;
+
+        if (manpowerApprovalRequisitionResponse.data.statusCode === 200) {
+          const approvalRequestBody = {
+            id: Number(data.id), // Ensuring it's a Number
+            remarks: String(data.remarks), // Ensuring it's a String
+            status: String('APPROVED') // Ensuring it's a String
+          };
+
+          const approvalResponse = await manpowerRequisitionUpdateService(approvalRequestBody, user.token);
+
+          if (approvalResponse.data.statusCode === 200) {
+            alert('Data Saved Successfully');
+            setAlertMessage('Data Saved Successfully');
+            setAlertSeverity('success');
+            setShouldResetForm(true); // Reset the form after success
+            // Reset form values only after successful submission
+            setFormValues({}); // Empty out the form fields
+            setTimeout(() => {
+              setAlertMessage('');
+            }, 3000); // Alert message disappears after 3 seconds
+          } else {
+            alert('Process failed! Try again');
+            setAlertMessage('Process failed! Try again');
+            setAlertSeverity('error');
+            setShouldResetForm(false);
+            setTimeout(() => {
+              setAlertMessage('');
+            }, 3000); // Alert message disappears after 3 seconds
+          }
+        }
+      } catch (error) {
+        // alert('Process failed! Try again');
+        setAlertMessage('Process failed! Please try again...');
+        setAlertSeverity('error');
+        setShouldResetForm(false);
+        setTimeout(() => {
+          setAlertMessage('');
+        }, 1000);
+      }
     }
   };
 
@@ -197,15 +411,21 @@ export default function EmployeeRequisitionFormPage() {
           REMARK HB LIMITED <br /> <br />
           EMPLOYEE REQUISITION FORM
         </h2> */}
-
         <Form
           fields={fields}
           initialValues={formData}
-          onSubmit={handleFormSubmit}
+          onSubmit={(data) => {
+            if (actionType === 'Approved') {
+              handleApprovalFormSubmit(data); // Call approval submission handler
+            } else {
+              handleFormSubmit(data); // Call standard submission handler
+            }
+          }}
           userList={approvers}
           rowsConfig={[2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 1]}
-          actionType="sendToApproval"
+          actionType={actionType || 'sendToApproval'} // Dynamically set actionType
           resetAfterSubmit={shouldResetForm}
+          readOnly={actionType === 'Approved'}
         />
       </div>
     </div>
