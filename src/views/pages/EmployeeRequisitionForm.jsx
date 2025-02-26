@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-vars */
 import Alert from '@mui/material/Alert';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getUserData } from '../../context/UserContext';
 import Form from '../utilities/Form';
 
@@ -21,20 +22,27 @@ import '../../styles/utils.css';
 
 export default function EmployeeRequisitionFormPage({ formData: initialFormData, actionType }) {
   const user = getUserData();
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState(initialFormData || {});
   const [approvers, setApprovers] = useState([]);
   const [requester, setRequester] = useState(null);
   const [shouldResetForm, setShouldResetForm] = useState(true);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
-  console.log(formData);
+  const formatDate = (date) => {
+    if (!date) return ''; // Handle null/undefined case
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0]; // Validate date
+  };
+
   useEffect(() => {
     if (initialFormData) {
-      setFormData({
+      setFormData((prevFormData) => ({
+        ...prevFormData, // Ensure previous state is retained
         ...initialFormData,
-        budgeted: initialFormData.isBudgeted ? ['true'] : ['false'] // Convert isBudgeted to budgeted format
-      });
+        budgeted: initialFormData.isBudgeted ? ['true'] : ['false'], // Convert isBudgeted to budgeted format
+        expectedJoiningDate: formatDate(initialFormData.expectedJoiningDate) || '' // Overwrite instead of adding a new key
+      }));
     } else {
       setFormData({});
     }
@@ -52,7 +60,7 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
     { label: 'Section', name: 'section', type: 'text' },
     { label: 'Sub Section', name: 'subSection', type: 'text' },
     { label: 'Expected Joining Date', name: 'expectedJoiningDate', type: 'date' },
-    { label: 'Replacement of Mr./Ms.', name: 'replacementOfMrMs', type: 'text' },
+    { label: 'Replacement of Mr./Ms.', name: 'replacementOf', type: 'text' },
     {
       label: 'Reason for Request',
       name: 'reasonForRequest',
@@ -77,7 +85,7 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
       ]
     },
     { label: 'Main Function', name: 'mainFunction', type: 'textarea' },
-    { label: 'Role & Responsibilities*', name: 'roleResponsibilities', type: 'textarea' },
+    { label: 'Role & Responsibilities*', name: 'roleAndResponsibilities', type: 'textarea' },
     { label: 'Minimum Experience', name: 'minimumExperience', type: 'number' },
     { label: 'Reports to', name: 'reportsTo', type: 'text' },
     { label: 'Minimum Education', name: 'minimumEducation', type: 'text' },
@@ -124,12 +132,10 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
   const handleFormSubmit = async (data) => {
     try {
       if (!requester) {
-        alert('Process failed! Try again');
         return;
       }
 
-      if (!data.requiredPosition || !data.department || !data.roleResponsibilities) {
-        alert('Please enter all required fields!');
+      if (!data.requiredPosition || !data.department || !data.roleAndResponsibilities) {
         return;
       }
 
@@ -142,10 +148,10 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
         subSection: data.subSection ?? '',
         reasonForRequest: data.reasonForRequest[0] ?? '',
         isBudgeted: data.budgeted[0] ?? false,
-        replacementOf: data.replacementOfMrMs ?? '',
+        replacementOf: data.replacementOf ?? '',
         mainFunction: data.mainFunction ?? '',
         expectedJoiningDate: data.expectedJoiningDate ? new Date(data.expectedJoiningDate).toISOString() : '',
-        roleAndResponsibilities: data.roleResponsibilities,
+        roleAndResponsibilities: data.roleAndResponsibilities,
         minimumExperience: data.minimumExperience ?? '',
         reportsTo: data.reportsTo ?? '',
         minimumEducation: data.minimumEducation ?? '',
@@ -173,7 +179,6 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
           throw new Error('API request failed or returned an error.');
         }
       } catch (error) {
-        console.error('API Error:', error);
         showAlert('Failed to submit requisition. Please try again.', 'error');
         return;
       }
@@ -201,11 +206,9 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
           showAlert('Process failed! Try again', 'error');
         }
       } catch (error) {
-        console.error('Approval API Error:', error);
         showAlert('Approval process failed! Try again.', 'error');
       }
     } catch (error) {
-      console.error('Unexpected Error:', error);
       showAlert('Process failed! Please try again...', 'error');
     } finally {
       window.scrollTo(0, 0);
@@ -218,7 +221,6 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
         showAlert('Invalid request data!', 'error');
         return;
       }
-
       const status = data.isApproved === 'Reject' ? 'REJECTED' : 'APPROVED';
       const manpowerApprovalRequisitionRequestBody = {
         manpowerRequisitionApprovalUniqueKey: {
@@ -235,7 +237,6 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
           const response = await apiFunction(requestBody, user.token);
           return response?.data?.statusCode === 200 ? response : null;
         } catch (error) {
-          console.error('API Error:', error);
           return null;
         }
       };
@@ -244,7 +245,6 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
         manpowerRequisitionApprovalUpdateService,
         manpowerApprovalRequisitionRequestBody
       );
-
       if (!manpowerApprovalResponse) {
         showAlert('Approval process failed! Try again.', 'error');
         return;
@@ -259,34 +259,42 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
         };
       } else {
         approvalRequestBody =
-          data.isApproved === 'no'
+          data.isApproved === 'no' && data.finish === 'yes'
             ? {
-                manpowerRequisitionApprovalUniqueKey: {
-                  approvalOfId: data.id,
-                  approvedById: data.selectedUser
-                },
-                status: 'PENDING'
-              }
-            : {
                 id: Number(data.id),
                 remarks: String(data.remarks),
-                status: 'APPROVED'
-              };
+                status: 'REJECTED'
+              }
+            : data.isApproved === 'no' && data.finish === undefined
+              ? {
+                  manpowerRequisitionApprovalUniqueKey: {
+                    approvalOfId: data.id,
+                    approvedById: data.selectedUser
+                  },
+                  status: 'PENDING'
+                }
+              : {
+                  id: Number(data.id),
+                  remarks: String(data.remarks),
+                  status: 'APPROVED'
+                };
       }
 
       const finalApprovalResponse = await handleApiCall(
-        status === 'REJECTED' ? manpowerRequisitionUpdateService : sendApprovalRequestInfoService,
+        status === 'REJECTED' || (status === 'APPROVED' && data.finish === true)
+          ? manpowerRequisitionUpdateService
+          : sendApprovalRequestInfoService,
         approvalRequestBody
       );
 
       if (finalApprovalResponse) {
         showAlert('Data Saved Successfully', 'success');
+        navigate('/employeeRequisition/approval', { replace: true });
         setShouldResetForm(true);
       } else {
         showAlert('Process failed! Try again.', 'error');
       }
     } catch (error) {
-      console.error('Unexpected Error:', error);
       showAlert('Process failed! Please try again...', 'error');
     }
   };
@@ -294,13 +302,13 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
   const showAlert = (message, severity) => {
     setAlertMessage(message);
     setAlertSeverity(severity);
-    setTimeout(() => setAlertMessage(''), 3000);
+    setTimeout(() => setAlertMessage(''), 5000);
   };
 
   return (
     <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#eef2f6' }}>
       {alertMessage && (
-        <Alert variant="filled" severity={alertSeverity} className="form-max-width center-margin">
+        <Alert variant="filled" severity={alertSeverity} className="form-max-width center-margin" style={{ marginBottom: '15px' }}>
           {alertMessage}
         </Alert>
       )}

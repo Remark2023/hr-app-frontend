@@ -5,7 +5,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
-
 const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSubmit, rowsConfig, actionType, userList, readOnly }) => {
   const initializeFormValues = () => {
     return fields.reduce((acc, field) => {
@@ -32,7 +31,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
   const [selectedUser, setSelectedUser] = useState(''); // State for selected user in the dropdown
   const [isApproved, setIsApproved] = useState(false);
   const [remarks, setRemarks] = useState({});
-
   useEffect(() => {
     // Sync state with updated initialValues if they change
     setFormValues((prevValues) => ({
@@ -40,7 +38,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
       ...initialValues
     }));
   }, [initialValues]);
-
   const handleChange = (name, value) => {
     const updatedValues = { ...formValues, [name]: value };
     setFormValues(updatedValues);
@@ -49,8 +46,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formValues);
-
     onSubmit(formValues); // Submit all form data
     if (resetAfterSubmit) setFormValues(initializeFormValues()); // Reset form after submit
   };
@@ -62,7 +57,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
 
   const handleApprovalFormSubmit = (e, action) => {
     e.preventDefault();
-
     if (action === 'send') {
       setIsModalOpenForApproval(true);
     } else if (action === 'cancel') {
@@ -76,12 +70,9 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
       ...formValues,
       selectedUser: selectedUser,
       isApproved: isApproved,
+      ...(isApproved !== 'no' && { finish: true }),
       remarks: remarks
-
-      // ...approvedData,
-      // isFinished: isFinished, // Add approvedBy fields to formValues
     };
-
     try {
       onSubmit(updatedFormValues);
       setIsModalOpenForApproval(false);
@@ -98,7 +89,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
 
   const handleApprovalFormSubmitReject = (e) => {
     e.preventDefault();
-
     // Ensure we are correctly setting isApproved to 'Reject'
     const updatedFormValues = {
       ...formValues, // Preserve existing form values
@@ -109,7 +99,7 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
 
     try {
       onSubmit(updatedFormValues); // Submit the updated form data
-
+      setIsModalOpenForReject(false);
       // Reset form if required
       if (resetAfterSubmit) {
         setFormValues(initializeFormValues());
@@ -130,8 +120,6 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
       ...formValues,
       selectedUser: selectedUser
     };
-    console.log(formDataWithUser);
-
     try {
       onSubmit(formDataWithUser);
       setIsModalOpen(false);
