@@ -300,13 +300,16 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
                     ))}
                   </div>
                 ) : field.type === 'checkbox' ? (
-                  <input
-                    type="checkbox"
-                    name={field.name}
-                    checked={formValues[field.name] || false}
-                    onChange={(e) => handleChange(field.name, e.target.checked)}
-                    style={responsiveStyles.checkbox}
-                  />
+                  <div style={{ textAlign: 'start' }}>
+                    <input
+                      type="checkbox"
+                      name={field.name}
+                      checked={formValues[field.name] || false}
+                      onChange={(e) => handleChange(field.name, e.target.checked)}
+                      style={responsiveStyles.checkbox}
+                    />
+                    <label style={{ fontWeight: 'bold', fontSize: '14px' }}>{field.label}</label>
+                  </div>
                 ) : (
                   <>
                     <label

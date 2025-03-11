@@ -221,13 +221,14 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
         showAlert('Invalid request data!', 'error');
         return;
       }
+
       const status = data.isApproved === 'Reject' ? 'REJECTED' : 'APPROVED';
       const manpowerApprovalRequisitionRequestBody = {
         manpowerRequisitionApprovalUniqueKey: {
           approvalOfId: Number(data.id),
           approvedById: Number(requester)
         },
-        remarks: String(data.remarks),
+        remarks: typeof data.remarks === 'string' && data.remarks.trim() !== '' ? data.remarks : null,
         status: status
       };
 
@@ -245,6 +246,7 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
         manpowerRequisitionApprovalUpdateService,
         manpowerApprovalRequisitionRequestBody
       );
+
       if (!manpowerApprovalResponse) {
         showAlert('Approval process failed! Try again.', 'error');
         return;
@@ -254,7 +256,7 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
       if (status === 'REJECTED') {
         approvalRequestBody = {
           id: Number(data.id),
-          remarks: String(data.remarks),
+          remarks: typeof data.remarks === 'string' && data.remarks.trim() !== '' ? data.remarks : null,
           status: 'REJECTED'
         };
       } else {
@@ -262,7 +264,7 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
           data.isApproved === 'no' && data.finish === 'yes'
             ? {
                 id: Number(data.id),
-                remarks: String(data.remarks),
+                remarks: typeof data.remarks === 'string' && data.remarks.trim() !== '' ? data.remarks : null,
                 status: 'REJECTED'
               }
             : data.isApproved === 'no' && data.finish === undefined
@@ -275,7 +277,7 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
                 }
               : {
                   id: Number(data.id),
-                  remarks: String(data.remarks),
+                  remarks: typeof data.remarks === 'string' && data.remarks.trim() !== '' ? data.remarks : null,
                   status: 'APPROVED'
                 };
       }
@@ -289,13 +291,17 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
 
       if (finalApprovalResponse) {
         showAlert('Data Saved Successfully', 'success');
-        navigate('/employeeRequisition/approval', { replace: true });
         setShouldResetForm(true);
+        setTimeout(() => {
+          navigate('/employeeRequisition/approval', { replace: true });
+        }, 5000);
       } else {
         showAlert('Process failed! Try again.', 'error');
       }
     } catch (error) {
       showAlert('Process failed! Please try again...', 'error');
+    } finally {
+      window.scrollTo(0, 0);
     }
   };
 
@@ -313,10 +319,6 @@ export default function EmployeeRequisitionFormPage({ formData: initialFormData,
         </Alert>
       )}
       <div className="form-max-width center-margin">
-        {/* <h2>
-          REMARK HB LIMITED <br /> <br />
-          EMPLOYEE REQUISITION FORM
-        </h2> */}
         <Form
           fields={fields}
           initialValues={formData}

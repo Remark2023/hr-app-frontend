@@ -278,7 +278,7 @@ export default function EvaluationFormPage() {
         <Form
           fields={fields}
           initialValues={formData}
-          // rowsConfig={[4, 2, 2, 5, 3, 3, 5, 5, 5, 5, 5]}
+          rowsConfig={[2, 2, 2, 2, 2, 1, 2, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]}
           onSubmit={handleSubmit}
           resetAfterSubmit={true}
         />
