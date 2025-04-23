@@ -5,7 +5,19 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
-const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSubmit, rowsConfig, actionType, userList, readOnly }) => {
+const Form = ({
+  fields,
+  initialValues = {},
+  onFormChange,
+  onSubmit,
+  resetAfterSubmit,
+  rowsConfig,
+  actionType,
+  userList,
+  readOnly,
+  isSeparated,
+  validationErrors = {}
+}) => {
   const initializeFormValues = () => {
     return fields.reduce((acc, field) => {
       if (field.defaultValue !== undefined) {
@@ -41,13 +53,13 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
   const handleChange = (name, value) => {
     const updatedValues = { ...formValues, [name]: value };
     setFormValues(updatedValues);
-    if (onFormChange) onFormChange(updatedValues); // Notify parent of changes
+    if (onFormChange) onFormChange(updatedValues);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formValues); // Submit all form data
-    if (resetAfterSubmit) setFormValues(initializeFormValues()); // Reset form after submit
+    onSubmit(formValues);
+    if (resetAfterSubmit) setFormValues(initializeFormValues());
   };
 
   const handleFormSubmit = (e) => {
@@ -149,6 +161,19 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
     },
     row: { display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%' },
+    separatedRow: {
+      display: 'flex',
+      gap: '15px',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      width: '100%',
+      backgroundColor: '#fff',
+      margin: '0 auto',
+      padding: '20px',
+      boxSizing: 'border-box',
+      borderRadius: '8px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+    },
     field: {
       flex: '1 1 calc(20% - 12px)',
       minWidth: '200px',
@@ -266,104 +291,168 @@ const Form = ({ fields, initialValues = {}, onFormChange, onSubmit, resetAfterSu
 
   return (
     <>
-      <form style={responsiveStyles.form}>
+      <form style={isSeparated ? {} : responsiveStyles.form}>
         {groupedFields.map((rowFields, rowIndex) => (
-          <div key={rowIndex} style={responsiveStyles.row}>
-            {rowFields.map((field, fieldIndex) => (
-              <div key={fieldIndex} style={responsiveStyles.field}>
-                {/* Handling Checkboxes (Single & Multiple Options) */}
-                {field.type === 'checkbox' && field.options ? (
-                  <div style={{ textAlign: 'start' }}>
-                    <label style={{ fontWeight: 'bold', fontSize: '14px' }}>{field.label}</label>
-                    {field.options.map((option, idx) => (
-                      <label key={idx} style={{ display: 'flex', gap: '5px' }}>
-                        <input
-                          type="checkbox"
-                          name={field.name}
-                          value={option.value}
-                          checked={(formValues[field.name] ?? []).includes(option.value)}
-                          onChange={(e) => {
-                            const updatedValues = formValues[field.name] ?? [];
-                            const newValue = e.target.value;
-                            const newCheckedState = e.target.checked;
+          <div>
+            <div key={rowIndex} style={isSeparated ? responsiveStyles.separatedRow : responsiveStyles.row}>
+              {rowFields.map((field, fieldIndex) => (
+                <div key={fieldIndex} style={responsiveStyles.field}>
+                  {/* Handling Checkboxes (Single & Multiple Options) */}
+                  {field.type === 'checkbox' && field.options ? (
+                    <div style={{ textAlign: 'start' }} hidden={field.hide}>
+                      <label style={{ fontWeight: 'bold', fontSize: '14px' }}>{field.label}</label>
+                      {field.options.map((option, idx) => (
+                        <label key={idx} style={{ display: 'flex', gap: '5px' }}>
+                          <input
+                            type="checkbox"
+                            name={field.name}
+                            value={option.value}
+                            checked={(formValues[field.name] ?? []).includes(option.value)}
+                            onChange={(e) => {
+                              const updatedValues = formValues[field.name] ?? [];
+                              const newValue = e.target.value;
+                              const newCheckedState = e.target.checked;
 
-                            handleChange(
-                              field.name,
-                              newCheckedState
-                                ? [...updatedValues, newValue] // Add selected value
-                                : updatedValues.filter((val) => val !== newValue) // Remove unselected value
-                            );
-                          }}
-                        />
-                        {option.label}
-                      </label>
-                    ))}
-                  </div>
-                ) : field.type === 'checkbox' ? (
-                  <div style={{ textAlign: 'start' }}>
-                    <input
-                      type="checkbox"
-                      name={field.name}
-                      checked={formValues[field.name] || false}
-                      onChange={(e) => handleChange(field.name, e.target.checked)}
-                      style={responsiveStyles.checkbox}
-                    />
-                    <label style={{ fontWeight: 'bold', fontSize: '14px' }}>{field.label}</label>
-                  </div>
-                ) : (
-                  <>
-                    <label
-                      style={{
-                        ...responsiveStyles.label,
-                        display: field.show ? 'none' : 'block'
-                      }}
-                    >
-                      {field.label}
-                    </label>
-
-                    {field.type === 'select' ? (
-                      <select
+                              handleChange(
+                                field.name,
+                                newCheckedState
+                                  ? [...updatedValues, newValue] // Add selected value
+                                  : updatedValues.filter((val) => val !== newValue) // Remove unselected value
+                              );
+                            }}
+                          />
+                          {option.label}
+                        </label>
+                      ))}
+                      {validationErrors[field.name] && <span style={{ color: 'crimson' }}>{validationErrors[field.name]}</span>}
+                    </div>
+                  ) : field.type === 'checkbox' ? (
+                    <div style={{ textAlign: 'start' }} hidden={field.hide}>
+                      <br />
+                      <input
+                        type="checkbox"
+                        id={field.name}
                         name={field.name}
-                        value={formValues[field.name] || ''}
-                        onChange={(e) => handleChange(field.name, e.target.value)}
+                        checked={formValues[field.name] || false}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          if (field.action) {
+                            field.action(checked);
+                          }
+                          handleChange(field.name, checked);
+                        }}
+                        style={responsiveStyles.checkbox}
+                      />
+                      <label htmlFor={field.name} style={{ fontWeight: 'bold', fontSize: '14px', margin: '0 0.5rem' }}>
+                        {field.label}
+                      </label>
+                      {validationErrors[field.name] && <span style={{ color: 'crimson' }}>{validationErrors[field.name]}</span>}
+                    </div>
+                  ) : (
+                    <div hidden={field.hide}>
+                      <label
                         style={{
-                          ...responsiveStyles.input,
+                          ...responsiveStyles.label,
                           display: field.show ? 'none' : 'block'
                         }}
                       >
-                        {field.options.map((option, idx) => (
-                          <option key={idx} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    ) : field.type === 'textarea' ? (
-                      <textarea
-                        name={field.name}
-                        value={formValues[field.name] || ''}
-                        placeholder={field.placeholder}
-                        readOnly={readOnly}
-                        onChange={(e) => handleChange(field.name, e.target.value)}
-                        style={{ ...responsiveStyles.input, height: '100px', resize: 'vertical' }}
-                      />
-                    ) : (
-                      <input
-                        type={field.type}
-                        name={field.name}
-                        value={formValues[field.name] || ''}
-                        placeholder={field.placeholder}
-                        readOnly={readOnly}
-                        onChange={(e) => handleChange(field.name, e.target.value)}
-                        style={{
-                          ...responsiveStyles.input,
-                          display: field.show ? 'none' : 'block'
-                        }}
-                      />
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
+                        {field.label}
+                      </label>
+
+                      {field.type === 'select' ? (
+                        <select
+                          name={field.name}
+                          value={formValues[field.name] || ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (field.action) {
+                              field.action(value);
+                            }
+                            handleChange(field.name, value);
+                          }}
+                          style={{
+                            ...responsiveStyles.input,
+                            display: field.show ? 'none' : 'block'
+                          }}
+                        >
+                          {field.options.map((option, idx) => (
+                            <option key={idx} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      ) : field.type === 'textarea' ? (
+                        <textarea
+                          name={field.name}
+                          value={formValues[field.name] || ''}
+                          placeholder={field.placeholder}
+                          readOnly={readOnly}
+                          onChange={(e) => handleChange(field.name, e.target.value)}
+                          style={{ ...responsiveStyles.input, height: '100px', resize: 'vertical' }}
+                        />
+                      ) : field.type === 'button' ? (
+                        <input
+                          type="button"
+                          value={field.name}
+                          style={{ ...responsiveStyles.input, cursor: 'pointer' }}
+                          onClick={(e) => console.log(e)}
+                        />
+                      ) : field.type === 'table' ? (
+                        <div hidden={field.showTable}>
+                          <button type="button" onClick={field.addRow} style={responsiveStyles.input} className="margin-bottom-1rem">
+                            Add more
+                          </button>
+
+                          <table className="table table-bordered table-striped table-highlight">
+                            <thead>
+                              <tr>
+                                {field.tableFields.map((tableField, fieldIndex) => (
+                                  <th key={fieldIndex}>{tableField.label}</th>
+                                ))}
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                              {field.tableFieldValueList.map((rowValue, valueIndex) => (
+                                <tr key={valueIndex}>
+                                  {field.tableFields.map((tableField, fieldIndex) => (
+                                    <td key={fieldIndex}>
+                                      <input
+                                        type={tableField.type}
+                                        name={tableField.name}
+                                        placeholder={tableField.placeholder}
+                                        value={rowValue[tableField.name] || ''}
+                                        onChange={(e) => field.handleTableValueChange(valueIndex, tableField.name, e.target.value)}
+                                        style={{ ...responsiveStyles.input }}
+                                      />
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <input
+                          type={field.type}
+                          name={field.name}
+                          value={formValues[field.name] || ''}
+                          placeholder={field.placeholder}
+                          readOnly={readOnly}
+                          onChange={(e) => handleChange(field.name, e.target.value)}
+                          style={{
+                            ...responsiveStyles.input,
+                            display: field.show ? 'none' : 'block'
+                          }}
+                        />
+                      )}
+                      {validationErrors[field.name] && <span style={{ color: 'crimson' }}>{validationErrors[field.name]}</span>}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            {isSeparated && rowIndex < groupedFields.length - 1 && <br />}
           </div>
         ))}
         {actionType === 'sendToApproval' ? (

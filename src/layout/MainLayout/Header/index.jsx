@@ -49,9 +49,8 @@ const Header = ({ handleLeftDrawerToggle }) => {
               }
             }}
           >
-            HR APP
+            HR360
           </Typography>
-          {/* <h1> HR APP</h1> */}
         </Box>
         <ButtonBase sx={{ borderRadius: '8px', overflow: 'hidden', marginLeft: '5px' }}>
           <Avatar

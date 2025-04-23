@@ -48,42 +48,16 @@ export default function QuickFilterOutsideOfGrid() {
             {
               field: 'action',
               headerName: 'Action',
-              flex: 1,
               sortable: false,
               renderCell: (params) => (
                 <div style={{ display: 'flex', gap: '5px', padding: '10px 0' }}>
-                  <button
-                    onClick={() => updateCandidateStatus(params.row, 'HIRED')}
-                    style={{
-                      padding: '7px',
-                      border: '1px solid #ccc',
-                      borderRadius: '5px',
-                      background: params.row.status === 'HIRED' ? '#0d6efd' : '',
-                      // color: '#fff',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Hired
-                  </button>
-                  <button
-                    onClick={() => updateCandidateStatus(params.row, 'REJECTED')}
-                    style={{
-                      padding: '7px',
-                      border: '1px solid #ccc',
-                      borderRadius: '5px',
-                      background: params.row.status === 'REJECTED' ? '#dc3545' : '',
-                      // color: '#fff',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Rejected
-                  </button>
                   <button
                     onClick={() => handlePrint(params.row)}
                     style={{
                       padding: '7px',
                       border: '1px solid #ccc',
                       borderRadius: '5px',
+                      width: '100%',
                       // background: '#673ab7',
                       // color: 'black',
                       cursor: 'pointer'
@@ -232,36 +206,9 @@ export default function QuickFilterOutsideOfGrid() {
           {
             field: 'action',
             headerName: 'Action',
-            flex: 1,
             sortable: false,
             renderCell: (params) => (
               <div style={{ display: 'flex', gap: '5px', padding: '10px 0' }}>
-                <button
-                  onClick={() => updateCandidateStatus(params.row, 'HIRED')}
-                  style={{
-                    padding: '7px',
-                    border: '1px solid #ccc',
-                    borderRadius: '5px',
-                    background: params.row.status === 'HIRED' ? '#0d6efd' : '',
-                    // color: '#fff',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Hired
-                </button>
-                <button
-                  onClick={() => updateCandidateStatus(params.row, 'REJECTED')}
-                  style={{
-                    padding: '7px',
-                    border: '1px solid #ccc',
-                    borderRadius: '5px',
-                    background: params.row.status === 'REJECTED' ? '#dc3545' : '',
-                    // color: '#fff',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Rejected
-                </button>
                 <button
                   onClick={() => handlePrint(params.row)}
                   style={{

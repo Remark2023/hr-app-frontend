@@ -1,19 +1,21 @@
 import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import '../../../styles/utils.css';
 import { signupProcess } from '../../../utils/SignupProcess';
+
+// styles
+import '../../../styles/utils.css';
 
 export default function EvaluationFormPage() {
   const [userCredentials, setUserCredentials] = useState([{ username: '', fullname: '', designation: '', channel: '', password: '' }]);
   const [errors, setErrors] = useState({});
 
   const headers = [
-    { label: 'Username', name: 'username', type: 'text' },
-    { label: 'Full Name', name: 'fullname', type: 'text' },
-    { label: 'Designation', name: 'designation', type: 'text' },
-    { label: 'Channel', name: 'channel', type: 'text' },
-    { label: 'Password', name: 'password', type: 'password', minLength: 6 }
+    { label: 'USERNAME', name: 'username', type: 'text' },
+    { label: 'FULL NAME', name: 'fullname', type: 'text' },
+    { label: 'DESIGNATION', name: 'designation', type: 'text' },
+    { label: 'DEPARTMENT', name: 'channel', type: 'text' },
+    { label: 'PASSWORD', name: 'password', type: 'password', minLength: 6 }
   ];
 
   const validateField = (index, name, value) => {
@@ -181,7 +183,7 @@ export default function EvaluationFormPage() {
         </button>
 
         <form style={responsiveStyles.form}>
-          <table className="table table-bordered table-striped table-highlight">
+          <table>
             <thead>
               <tr>
                 {headers.map((field, fieldIndex) => (
@@ -192,10 +194,11 @@ export default function EvaluationFormPage() {
             </thead>
             <tbody>
               {userCredentials.map((credential, index) => (
-                <tr key={index} style={{ border: '2px solid crimson' }}>
+                <tr key={index}>
                   {headers.map((field, fieldIndex) => (
                     <td key={fieldIndex}>
                       <input
+                        className="input-field"
                         type={field.type}
                         name={field.name}
                         value={credential[field.name] || ''}

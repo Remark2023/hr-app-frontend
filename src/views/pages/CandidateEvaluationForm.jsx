@@ -4,10 +4,13 @@ import Alert from '@mui/material/Alert';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { getUserData } from '../../context/UserContext';
-import Form from '../utilities/Form';
 
 // api services
 import { addEvaluationForm, getCandidatesByDateService, getCandidatesService } from '../../services/ApiServices';
+
+// css
+import '../../styles/candidate-evaluation-form.css';
+import '../../styles/utils.css';
 
 export default function EvaluationFormPage() {
   const user = getUserData();
@@ -142,6 +145,43 @@ export default function EvaluationFormPage() {
     setSelectedCandidate(selectedOption.value);
   };
 
+  const positionOptions = [
+    { value: 'EXECUTIVE', label: 'EXECUTIVE' },
+    { value: 'SENIOR EXECUTIVE', label: 'SENIOR EXECUTIVE' }
+  ];
+
+  const departmentOptions = [
+    { value: 'IT', label: 'IT' },
+    { value: 'SALES', label: 'SALES' },
+    { value: 'HR', label: 'HR' }
+  ];
+
+  const customStylesSelect = {
+    control: (provided, state) => ({
+      ...provided,
+      borderColor: '#ccc', // your custom border
+      boxShadow: 'none', // remove blue glow
+      '&:hover': {
+        borderColor: '#ccc' // on hover
+      }
+    }),
+    // Optional: remove blue border on focus too
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999 // helpful if used in modals/forms
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? '#eef2f6' // when selected
+        : state.isFocused
+          ? '#eef2f6' // when hovered
+          : '#f9f9f9', // default background
+      color: '#000',
+      cursor: 'pointer'
+    })
+  };
+
   return (
     <div>
       {alertMessage && (
@@ -159,55 +199,263 @@ export default function EvaluationFormPage() {
           marginBottom: '1rem'
         }}
       >
-        <div
-          style={{
-            flex: '1 1 calc(20% - 12px)',
-            minWidth: '200px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            boxSizing: 'border-box'
-          }}
-        >
-          <label style={{ fontWeight: 'bold', fontSize: '14px', textAlign: 'left' }}>Select interview date</label>
-          <input
-            type="date"
-            name="interviewDate"
-            onChange={(e) => handleDateChange(e.target.value)}
-            style={{ padding: '10px', width: '100%', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
+        <div className="input-div">
+          <label className="input-label">Select interview date</label>
+          <input type="date" name="interviewDate" onChange={(e) => handleDateChange(e.target.value)} className="input-field" />
         </div>
 
-        <div
-          style={{
-            flex: '1 1 calc(20% - 12px)',
-            minWidth: '200px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            boxSizing: 'border-box'
-          }}
-        >
-          <label style={{ fontWeight: 'bold', fontSize: '14px', textAlign: 'left' }}>Select candidate</label>
+        <div className="input-div">
+          <label className="input-label">Select candidate</label>
           <Select
+            className="input-field-dropdown"
             name="candidate"
             onChange={handleCandidateSelection}
             onInputChange={handleInputChange}
             options={candidateOptions}
             placeholder="Type to select a candidate..."
             isClearable
-            style={{ padding: '10px', width: '100%', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
+            styles={customStylesSelect}
           />
         </div>
       </div>
-      <Form
+      {/* <Form
         fields={fields}
         initialValues={formData} // Pass the form data, including calculated fields
         rowsConfig={[3, 3, 3]}
         onFormChange={handleFormChange} // Update calculations when inputs change
         onSubmit={handleSubmit} // Handle final submission
         resetAfterSubmit={shouldResetForm}
-      />
+      /> */}
+      <div className="container">
+        <div className="info">
+          <div className="input-div">
+            <label className="input-label">INTERVIEW POSITION</label>
+            <Select
+              name="candidate"
+              className="input-field-dropdown"
+              onChange={handleCandidateSelection}
+              onInputChange={handleInputChange}
+              options={positionOptions}
+              placeholder="Type to select a candidate..."
+              isClearable
+            />
+          </div>
+          <div className="input-div">
+            <label className="input-label">INTERVIEW DEPARTMENT</label>
+            <Select
+              className="input-field-dropdown"
+              name="candidate"
+              onChange={handleCandidateSelection}
+              onInputChange={handleInputChange}
+              options={departmentOptions}
+              placeholder="Type to select a candidate..."
+              isClearable
+            />
+          </div>
+        </div>
+
+        <div className="info">
+          <div className="input-div">
+            <label className="input-label">CURRENT SALARY</label>
+            <input
+              type="text"
+              name="currentSalary"
+              // value={formValues[field.name] || ''}
+              // placeholder={field.placeholder}
+              // readOnly={true}
+              // onChange={(e) => handleChange(field.name, e.target.value)}
+              // style={{
+              //   ...responsiveStyles.input,
+              //   display: field.show ? 'none' : 'block'
+              // }}
+              className="input-field"
+            />
+          </div>
+          <div className="input-div">
+            <label className="input-label">CURRENT DESIGNATION</label>
+            <input
+              type="text"
+              name="currentSalary"
+              // value={formValues[field.name] || ''}
+              // placeholder={field.placeholder}
+              // readOnly={readOnly}
+              // onChange={(e) => handleChange(field.name, e.target.value)}
+              // style={{
+              //   ...responsiveStyles.input,
+              //   display: field.show ? 'none' : 'block'
+              // }}
+              className="input-field"
+            />
+          </div>
+          <div className="input-div">
+            <label className="input-label">TOTAL YEARS OF EXPERIENCES</label>
+            <input
+              type="text"
+              name="currentSalary"
+              // value={formValues[field.name] || ''}
+              // placeholder={field.placeholder}
+              // readOnly={readOnly}
+              // onChange={(e) => handleChange(field.name, e.target.value)}
+              // style={{
+              //   ...responsiveStyles.input,
+              //   display: field.show ? 'none' : 'block'
+              // }}
+              className="input-field"
+            />
+          </div>
+        </div>
+
+        <div className="info">
+          <div className="input-div">
+            <label className="input-label">EXPECTED SALARY</label>
+            <input
+              type="text"
+              name="currentSalary"
+              // value={formValues[field.name] || ''}
+              // placeholder={field.placeholder}
+              // readOnly={readOnly}
+              // onChange={(e) => handleChange(field.name, e.target.value)}
+              // style={{
+              //   ...responsiveStyles.input,
+              //   display: field.show ? 'none' : 'block'
+              // }}
+              className="input-field"
+            />
+          </div>
+          <div className="input-div">
+            <label className="input-label">NEGOTIATED SALARY</label>
+            <input
+              type="text"
+              name="currentSalary"
+              // value={formValues[field.name] || ''}
+              // placeholder={field.placeholder}
+              // readOnly={readOnly}
+              // onChange={(e) => handleChange(field.name, e.target.value)}
+              // style={{
+              //   ...responsiveStyles.input,
+              //   display: field.show ? 'none' : 'block'
+              // }}
+              className="input-field"
+            />
+          </div>
+        </div>
+
+        <hr style={{ margin: '2rem' }} />
+
+        <h3>EVALUATION</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Attribute</th>
+              <th>
+                Excellent
+                <br />
+                (5)
+              </th>
+              <th>
+                Good
+                <br />
+                (4)
+              </th>
+              <th>
+                Average
+                <br />
+                (3)
+              </th>
+              <th>
+                Below Average
+                <br />
+                (2)
+              </th>
+              <th>
+                Poor
+                <br />
+                (1)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Appearance (Grooming, Body language)</td>
+              {[5, 4, 3, 2, 1].map((score) => (
+                <td key={score}>
+                  <input type="checkbox" name="appearance" value={score} />
+                </td>
+              ))}
+            </tr>
+
+            <tr>
+              <td>Interpersonal Skills / Outspoken</td>
+              {[5, 4, 3, 2, 1].map((score) => (
+                <td key={score}>
+                  <input type="checkbox" name="appearance" value={score} />
+                </td>
+              ))}
+            </tr>
+
+            <tr>
+              <td>Leadership Competencies</td>
+              {[5, 4, 3, 2, 1].map((score) => (
+                <td key={score}>
+                  <input type="checkbox" name="appearance" value={score} />
+                </td>
+              ))}
+            </tr>
+
+            <tr>
+              <td>Positive Mindset</td>
+              {[5, 4, 3, 2, 1].map((score) => (
+                <td key={score}>
+                  <input type="checkbox" name="appearance" value={score} />
+                </td>
+              ))}
+            </tr>
+
+            <tr>
+              <td>Necessary Knowledge for This Position</td>
+              {[5, 4, 3, 2, 1].map((score) => (
+                <td key={score}>
+                  <input type="checkbox" name="appearance" value={score} />
+                </td>
+              ))}
+            </tr>
+
+            <tr>
+              <td>Poor Fair Average Good Superior</td>
+              {[5, 4, 3, 2, 1].map((score) => (
+                <td key={score}>
+                  <input type="checkbox" name="appearance" value={score} />
+                </td>
+              ))}
+            </tr>
+
+            <tr>
+              <td>Interview Q/A Assesment</td>
+              {[5, 4, 3, 2, 1].map((score) => (
+                <td key={score}>
+                  <input type="checkbox" name="appearance" value={score} />
+                </td>
+              ))}
+            </tr>
+
+            <tr>
+              <td>Communication Skills</td>
+              {[5, 4, 3, 2, 1].map((score) => (
+                <td key={score}>
+                  <input type="checkbox" name="appearance" value={score} />
+                </td>
+              ))}
+            </tr>
+
+            <tr>
+              <td>
+                <strong>Total score:</strong>
+              </td>
+              <td colSpan={5} />
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

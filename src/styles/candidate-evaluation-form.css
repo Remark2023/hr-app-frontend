@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #000;
+  background: #fff;
+}
+
+.info {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+table,
+th,
+td {
+  border: 1px solid #000;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: center;
+}
+
+table td input {
+  width: 5rem;
+}
